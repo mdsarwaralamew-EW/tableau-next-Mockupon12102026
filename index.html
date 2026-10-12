@@ -205,7 +205,7 @@
 <div class="assetbar">
   <span><b>Semantic model:</b> EW_Group_Sales_Finance</span>
   <span><b>Data:</b> Data 360 — Salesforce (zero-copy) + Navision for GL/stock</span>
-  <span><b>Metrics:</b> 33 published</span>
+  <span><b>Metrics:</b> 31 published</span>
   <span><b>Refreshed:</b> today 6:00 AM</span>
   <span id="scopeLbl"></span>
 </div>
@@ -241,8 +241,6 @@
   <div class="grid g4" id="r1"></div>
   <div class="sect">Sales efficiency</div>
   <div class="grid g4" id="r3"></div>
-  <div class="sect">Working capital, service &amp; risk</div>
-  <div class="grid g4" id="r4"></div>
 
   <div class="sect">Forecasting, Sales In &amp; Sales Out</div>
   <div class="grid g4" id="r7"></div>
@@ -257,8 +255,6 @@
     </div>
   </div>
 
-  <div class="sect">Projects &amp; incentive</div>
-  <div class="grid g4" id="r6"></div>
 
   <div class="sect">Traderz — trading counter activity</div>
   <div class="grid g4" id="r5"></div>
@@ -310,30 +306,29 @@
     </div>
   </div>
 
-  <div class="grid g3">
+  <div class="grid g2">
     <div class="w"><div class="wh"><h3>Revenue by brand</h3><span class="sub" id="brSub"></span><span class="go" onclick="openMetric('rev')">Open metric →</span><span class="kind">VIZ · BAR</span></div><div class="wb" id="brandViz"></div></div>
     <div class="w"><div class="wh"><h3>Lost value by reason</h3><span class="sub" id="lsub"></span><span class="go" onclick="openMetric('win')">Open metric →</span><span class="kind">VIZ · BAR</span></div><div class="wb" id="loss"></div></div>
-    <div class="w"><div class="wh"><h3>AR ageing</h3><span class="sub">snapshot, AED M</span><span class="go" onclick="openMetric('ar90')">Open metric →</span><span class="kind">VIZ · BAR</span></div><div class="wb" id="ar"></div></div>
   </div>
 
   <div class="w" style="margin-bottom:12px">
     <div class="wh"><h3>Four-company comparison</h3><span class="sub">conditional formatting · click a row to filter</span><span class="go" onclick="openMetric('att')">Open metric →</span><span class="kind">VIZ · TABLE</span></div>
     <div class="wb tbl"><table>
-      <thead><tr><th>Company</th><th>Focus</th><th class="r">Attain %</th><th class="r">Win %</th><th class="r">GM %</th><th class="r">EBITDA %</th><th class="r">DSO</th><th class="r">Fill %</th><th class="r">OTD %</th><th class="r">AR&gt;90d</th><th class="r">YoY %</th></tr></thead>
+      <thead><tr><th>Company</th><th>Focus</th><th class="r">Attain %</th><th class="r">Win %</th><th class="r">GM %</th><th class="r">EBITDA %</th><th class="r">YoY %</th></tr></thead>
       <tbody id="bench"></tbody></table></div>
   </div>
 
   <div class="w" style="margin-bottom:12px">
     <div class="wh"><h3>Sales manager performance</h3><span class="sub">Electric Way team structure · click to filter</span><span class="go" onclick="openMetric('att')">Open metric →</span><span class="kind">VIZ · TABLE</span></div>
     <div class="wb tbl"><table>
-      <thead><tr><th>Sales Manager</th><th>Company</th><th class="r">Team size</th><th class="r">Actual</th><th class="r">Target</th><th class="r">Attain.</th><th class="r">Win %</th><th class="r">AR&gt;180d</th></tr></thead>
+      <thead><tr><th>Sales Manager</th><th>Company</th><th class="r">Team size</th><th class="r">Actual</th><th class="r">Target</th><th class="r">Attain.</th><th class="r">Win %</th></tr></thead>
       <tbody id="mgrTbl"></tbody></table></div>
   </div>
 
   <div class="w" style="margin-bottom:12px">
     <div class="wh"><h3>Salesperson leaderboard</h3><span class="sub">click a row to filter · AED M</span><span class="go" onclick="openMetric('rev')">Open metric →</span><span class="kind">VIZ · TABLE</span></div>
     <div class="wb tbl"><table>
-      <thead><tr><th>#</th><th>Salesperson</th><th>Role</th><th>Company</th><th>Reports to</th><th class="r">Actual</th><th class="r">Target</th><th class="r">Attain.</th><th class="r">Incentive</th><th class="r">AR&gt;180d</th></tr></thead>
+      <thead><tr><th>#</th><th>Salesperson</th><th>Role</th><th>Company</th><th>Reports to</th><th class="r">Actual</th><th class="r">Target</th><th class="r">Attain.</th></tr></thead>
       <tbody id="lb"></tbody></table></div>
   </div>
 
@@ -360,7 +355,7 @@
   <div class="sect">Notes &amp; reference</div>
   <div class="txt" id="orgNote"></div>
   <div class="txt">
-    <b>Data coverage.</b> Your Salesforce objects — Lead, Account, Contact, Project, Opportunity, Quote, Order, Invoice, Balance, Products, Sales Executive Monthly Target and the incentive model — come into Data 360 by <b>zero-copy</b>, covering most of this dashboard including Sales In (Order), Sales Out (Invoice), AR ageing (Balance) and the forecast.
+    <b>Data coverage.</b> Your Salesforce objects — Lead, Account, Contact, Project, Opportunity, Quote, Order, Invoice, Balance, Products, Sales Executive Monthly Target — come into Data 360 by <b>zero-copy</b>, covering most of this dashboard including Sales In (Order), Sales Out (Invoice), AR ageing (Balance) and the forecast.
     <b>Reading Navision directly.</b> Data 360 offers 270+ connectors plus MuleSoft, and ingested data lands in <b>Data Lake Objects</b> mapped to <b>Data Model Objects</b> — <u>not</u> Salesforce custom objects. So for the gaps below you point at Navision itself; you do not stage data into Salesforce first. Two supported routes: MuleSoft's Database connector over JDBC to the Navision SQL Server (or its Dynamics 365 connector) feeding the Ingestion API, or replicate Navision into a cloud warehouse and use a <b>zero-copy</b> connector.
     <b>Gaps that need Navision:</b> item cost for gross margin, G/L accounts for EBITDA, inventory value and days of stock, payable days for the cash conversion cycle, and promised-vs-actual delivery dates for On-Time Delivery.
   </div>
@@ -478,12 +473,6 @@ const ACT={callsT:2000,visitsT:350,planner:88,plannerT:95,custContacted:410,cust
 
 /* Projects object — project-linked pipeline */
 const PROJ={EW:{n:46,val:650},EWA:{n:15,val:190},HYD:{n:12,val:166},TRZ:{n:4,val:30}};
-/* Incentive model — ILLUSTRATIVE TIERS, replace with your actual scheme
-   >=100% of monthly target: 1.50% of invoiced value · 85-99%: 0.75% · below 85%: nil */
-function incentiveOf(r){const att=r.t>0?r.a/r.t:0;
- const rate=att>=1?0.015:att>=0.85?0.0075:0;
- return r.a*rate;}
-const INC={threshold:85,rateFull:1.50,ratePartial:0.75,budgetPctGP:6.0};
 /* Sales In = Order object (orders received) · Sales Out = Invoice object (invoiced/dispatched) */
 const SALES={EW:{in:66.4,out:61.5},EWA:{in:16.3,out:15.0},HYD:{in:13.7,out:12.8},TRZ:{in:12.4,out:12.0}};
 const SALES_TREND={in:[94.6,98.5,101.9,103.6,106.6,108.8],out:[82.2,85.5,90.4,92.9,97.2,101.3]};
@@ -527,7 +516,7 @@ const SPK={rev:[82.2,85.5,90.4,92.9,97.2,101.3],att:[102,103,105,105,106,107],gp
  win:[50,51,52,52,53,53],gmp:[24.2,24.5,24.8,25.0,25.3,25.5],calls:[1620,1710,1680,1750,1790,1850],visits:[280,295,290,305,312,320]};
 const DLT={rev:8.9,att:1.0,pipeline:2.1,openpipe:1.8,win:1.0,ar90:-8.4,gp:8.5,ebitda:0.1,cash:14.5,intake:-5.2,
  coverage:1.5,avgdeal:-3.1,cycle:0.0,tat:-3.4,backlog:-3.1,inventory:-1.2,ccc:-2.6,dso:-1.4,otd:0.9,fill:1.1,
- credit:-2.0,calls:3.4,visits:2.6,planner:1.2,custcontacted:4.2,incqual:2.0,projmix:0.8,forecast:6.4,salesin:2.0,salesout:6.6,netflow:4.1,projects:3.0,incentive:5.5};
+ credit:-2.0,calls:3.4,visits:2.6,planner:1.2,custcontacted:4.2,projmix:0.8,forecast:6.4,salesin:2.0,salesout:6.6,netflow:4.1,projects:3.0};
 const PER={today:{k:.05,lb:"Today"},mtd:{k:1,lb:"MTD"},qtd:{k:2.7,lb:"QTD"},ytd:{k:6.5,lb:"YTD"}};
 let S={p:"mtd",co:"all",mgr:"all",rep:"all",br:"all"};
 
@@ -572,8 +561,6 @@ function agg(){
  const wA=f=>ks.reduce((s,c,i)=>s+f(c)*arT[i],0)/tA;
  const sum=f=>ks.reduce((s,c)=>s+f(c),0);
  const TR=R.filter(x=>x.c==="TRZ");
- const incTot=R.reduce((s,x)=>s+incentiveOf(x),0)*K*bf;
- const qualifying=R.filter(x=>x.t>0&&x.a/x.t>=INC.threshold/100).length;
  return{actual,target,won,lost,stg,stgOpen,allPipe,openPipe,opps:Math.round(sum(c=>OPPS[c])*sh),ar,
   arAcc:Math.round(sum(c=>ARA[c])*sh),lb,lostVal:Object.values(lb).reduce((s,v)=>s+v,0),
   gm:wR(c=>FIN[c].gm),dso:wA(c=>FIN[c].dso),cash:sum(c=>FIN[c].cash)*sh*K*bf,intake:sum(c=>FIN[c].intake)*sh*K*bf,
@@ -587,7 +574,7 @@ function agg(){
   projN:Math.round(sum(c=>PROJ[c].n)*sh),projVal:sum(c=>PROJ[c].val)*sh,
   salesIn:sum(c=>SALES[c].in)*sh*K*bf,salesOut:sum(c=>SALES[c].out)*sh*K*bf,
   pipeClose:sum(c=>FCST[c].pipeClose)*sh*bf,
-  inc:incTot,qualifying,repCount:R.length,
+  repCount:R.length,
   sdrWorked:Math.round(AGENT.sdr.worked*sh*K),sdrQual:Math.round(AGENT.sdr.qualified*sh*K),
   coachReps:Math.round(AGENT.coach.repsCoached*sh),coachSessions:Math.round(AGENT.coach.sessions*sh*K),
   eciCalls:Math.round(AGENT.eci.callsAnalysed*sh*K)};
@@ -681,10 +668,6 @@ custcontacted:{n:"Customers Contacted",sm:"Distinct Accounts Contacted",ag:"COUN
  what:"Unique customers the Traderz counter actually spoke to or visited in the period. Calls measure effort; this measures reach.",
  calc:"COUNTD([Account Id])   // activities logged in the period",
  src:"Salesforce Activity records on <b>Account</b> / <b>Contact</b>",snap:false,rel:["calls","visits","planner"]},
-incqual:{n:"Incentive Qualification",sm:"Qualifying Reps / Total Reps",ag:"Ratio",tm:"Target Month",dm:"Company, Sales Manager",
- what:"Share of the sales team at or above the incentive threshold. A very high number may mean targets are set too softly; a very low one means the scheme is not motivating anyone.",
- calc:"COUNTD(IF [Attainment] >= 0.85 THEN [User Id] END)\n/ COUNTD([User Id])",
- src:"Salesforce <b>Sales Executive Monthly Target</b> + incentive model",snap:false,rel:["incentive","att"]},
 projmix:{n:"Project Mix",sm:"Project Pipeline / Open Pipeline",ag:"Ratio",tm:"Snapshot Date",dm:"Company",
  what:"How much of the open pipeline is project-linked rather than transactional. The two need different coverage and cycle assumptions.",
  calc:"SUM([Project Linked Amount]) / SUM([Open Pipeline])",
@@ -709,10 +692,6 @@ projects:{n:"Active Projects",sm:"Project Count / Value",ag:"COUNTD + SUM",tm:"P
  what:"Projects currently live and the opportunity value linked to them. Separates project business from transactional counter business — the two behave nothing alike.",
  calc:"COUNTD([Project Id])          // active projects\nSUM([Linked Opportunity Amount]) // project pipeline",
  src:"Salesforce <b>Projects</b> object, related to Opportunity and Account",snap:true,rel:["openpipe","avgdeal","cycle"]},
-incentive:{n:"Incentive Payout",sm:"Incentive Earned",ag:"SUM",tm:"Target Month",dm:"Company, Sales Manager, Salesperson, Tier",
- what:"Incentive earned by the sales team for the period, and what it costs as a share of gross profit. Lets the CEO see whether the scheme is paying out for the right performance.",
- calc:"// tiered on monthly target attainment\nIF [Attainment] >= 1.00 THEN [Invoiced Value] * 0.015\nELSEIF [Attainment] >= 0.85 THEN [Invoiced Value] * 0.0075\nELSE 0 END\n\n// cost ratio\nSUM([Incentive Earned]) / SUM([Gross Profit])",
- src:"Salesforce <b>incentive model</b> + <b>Sales Executive Monthly Target</b>, joined to invoiced value",snap:false,rel:["att","gp","rev"]},
 calls:{n:"Customer Calls",sm:"Call Activity Count",ag:"COUNT",tm:"Activity Date",dm:"Salesperson, Customer, Call Outcome",
  what:"Daily customer calls logged by the Traderz trading counter — the core activity driver of that business.",
  calc:"COUNT(IF [Activity Type]='Call' THEN [Activity Id] END)",
@@ -833,11 +812,6 @@ function render(){
   card("avgdeal",fA(avg),A.won+" deals won",cf(avg>=.5,avg>=.3),"")+
   card("cycle",Math.round(A.cycle)+" d","Goal ≤ 45 days",cf(A.cycle<=45,A.cycle<=55),spark(SPK.cycle,"#D83A00"))+
   card("tat",A.tat.toFixed(1)+" d","Goal ≤ 2 days",cf(A.tat<=2,A.tat<=4),spark(SPK.tat,"#D83A00"));
- $("r4").innerHTML=
-  card("ar90",fA(A.ar[3]),ar90s.toFixed(1)+"% of book · "+A.arAcc+" accounts",cf(ar90s<5,ar90s<8),"")+
-  card("dso",Math.round(A.dso)+" d","Terms 60 days",cf(A.dso<=60,A.dso<=75),spark(SPK.dso,"#BA0517"))+
-  card("fill",A.fill.toFixed(0)+"%","Target ≥ 95%",cf(A.fill>=95,A.fill>=90),"")+
-  card("otd",A.otd.toFixed(0)+"%","Target ≥ 95%",cf(A.otd>=95,A.otd>=90),"");
  $("r5").innerHTML=A.trzReps>0
   ? card("calls",fN(A.calls),"Target "+fN(callsT)+" · "+A.trzReps+" people",cf(A.calls>=callsT,A.calls>=callsT*.9),spark(SPK.calls,"#D83A00"))+
     card("visits",fN(A.visits),"Target "+fN(visitsT),cf(A.visits>=visitsT,A.visits>=visitsT*.9),spark(SPK.visits,"#D83A00"))+
@@ -888,19 +862,6 @@ function render(){
    <b class="vl">${r.att}%</b></div>`).join("")
   +`<div class="note">Bar = forecast, dark tick = target. Forecast is a <b>calculated</b> figure (invoiced to date + open pipeline expected to close × win rate), not a statistical model — Tableau Next does not expose Tableau Desktop's forecasting engine.</div>`;
 
- /* projects + incentive cards */
- const incPctGP=gp>0?A.inc/gp*100:0;
- const qualPct=A.repCount>0?A.qualifying/A.repCount*100:0;
- put("projects",fN(A.projN)+" live",fA(A.projVal)+" linked pipeline",null);
- put("incentive",fA(A.inc),incPctGP.toFixed(1)+"% of gross profit",cf(incPctGP<=INC.budgetPctGP,incPctGP<=INC.budgetPctGP*1.2));
- put("incqual",A.qualifying+" of "+A.repCount,Math.round(qualPct)+"% above threshold",cf(qualPct>=60&&qualPct<=90,qualPct>=40));
- put("projmix",Math.round(A.projVal/Math.max(A.openPipe,1)*100)+"%","of Open Pipeline",null);
- $("r6").innerHTML=
-  card("projects",fN(A.projN),fA(A.projVal)+" of pipeline is project-linked",null,"")+
-  card("incentive",fA(A.inc),incPctGP.toFixed(1)+"% of gross profit · budget "+INC.budgetPctGP+"%",cf(incPctGP<=INC.budgetPctGP,incPctGP<=INC.budgetPctGP*1.2),"")+
-  card("incqual",A.qualifying+" of "+A.repCount,Math.round(qualPct)+"% at or above the "+INC.threshold+"% threshold",cf(qualPct>=60&&qualPct<=90,qualPct>=40),"")+
-  card("projmix",Math.round(A.projVal/Math.max(A.openPipe,1)*100)+"%",fA(A.projVal)+" of "+fA(A.openPipe)+" is project-linked",null,"");
-
  /* trend */
  const ks=keys();
  $("lgd").innerHTML=ks.map(c=>`<span><i style="background:${CO[c].hex}"></i>${CO[c].name}</span>`).join("");
@@ -937,10 +898,6 @@ function render(){
  const lc={"Price did not match":"#BA0517","No Stock":"#D83A00","Order Cancelled":"#A86403"};
  $("loss").innerHTML=le.map(([n,v])=>`<div class="hb" onclick="openMetric('win')"><span class="lb">${n}</span><span class="tr"><i style="width:${v/lm*100}%;background:${lc[n]}"></i></span><b class="vl">${fM(v)}</b></div>`).join("")
   +`<div class="note">Total lost ${fA(A.lostVal)} · ${A.lost} lost, ${A.won} won</div>`;
- const am=Math.max(...A.ar),al=["0–30 d","31–60 d","61–90 d","90+ d"],ac=["#2E844A","#A86403","#D83A00","#BA0517"];
- $("ar").innerHTML=A.ar.map((v,i)=>`<div class="hb" onclick="openMetric('ar90')"><span class="lb">${al[i]}</span><span class="tr"><i style="width:${v/am*100}%;background:${ac[i]}"></i></span><b class="vl">${fM(v)}</b></div>`).join("")
-  +`<div class="note">Total ${fA(arTot)} · aged from due date</div>`;
-
  /* benchmark */
  const cell=(v,g,b,hi,f)=>{const ok=hi?v>=g:v<=g,poor=hi?v<b:v>b;return `<td class="r ${ok?"cg":poor?"cr":"ca"}">${f(v)}</td>`;};
  const focus={EW:"Cable &amp; wire",EWA:"Cable &amp; wire (KSA)",HYD:"Pumps &amp; motors",TRZ:"Trading counter"};
@@ -949,8 +906,7 @@ function render(){
    <td><span class="chip" style="background:${CO[c].hex}22;color:${CO[c].hex}">${CO[c].short}</span> <b>${CO[c].name}</b><div style="font-size:10.5px;color:var(--tx3)">${CO[c].loc}</div></td>
    <td style="font-size:11.5px;color:var(--tx3)">${focus[c]}</td>
    ${cell(d.att,100,85,true,v=>v+"%")}${cell(d.win,40,30,true,v=>v+"%")}${cell(FIN[c].gm,25,20,true,v=>v.toFixed(1)+"%")}
-   ${cell(ERP[c].ebitda,12,8,true,v=>v.toFixed(1)+"%")}${cell(FIN[c].dso,60,75,false,v=>v+" d")}
-   ${cell(OPS[c].fill,95,90,true,v=>v+"%")}${cell(ERP[c].otd,95,90,true,v=>v+"%")}${cell(AR[c][3],2,5,false,v=>fM(v))}
+   ${cell(ERP[c].ebitda,12,8,true,v=>v.toFixed(1)+"%")}
    ${cell(OPS[c].yoy,8,0,true,v=>(v>=0?"+":"")+v.toFixed(1)+"%")}</tr>`;}).join("");
 
  /* manager table */
@@ -959,9 +915,8 @@ function render(){
    <td><b>${m}</b></td><td><span class="chip" style="background:${CO[d.c].hex}22;color:${CO[d.c].hex}">${CO[d.c].short}</span></td>
    <td class="r">${d.n} (incl. self)</td><td class="r"><b>${fM(d.a)}</b></td><td class="r">${fM(d.t)}</td>
    <td class="r ${d.att>=100?"cg":d.att>=85?"ca":"cr"}">${d.att}%</td>
-   <td class="r ${d.win>=40?"cg":d.win>=30?"ca":"cr"}">${d.win}%</td>
-   <td class="r ${d.ar>5?"cr":""}">${fM(d.ar)}</td></tr>`;}).join("")
-  +`<tr><td colspan="8" style="font-size:11px;color:var(--tx3)">Reporting lines were provided for Electric Way only. Managers for Electric Way Arabia, Hydroway and Traderz are not yet mapped — send them across and this table will cover all four companies.</td></tr>`;
+   <td class="r ${d.win>=40?"cg":d.win>=30?"ca":"cr"}">${d.win}%</td></tr>`;}).join("")
+  +`<tr><td colspan="7" style="font-size:11px;color:var(--tx3)">Reporting lines were provided for Electric Way only. Managers for Electric Way Arabia, Hydroway and Traderz are not yet mapped — send them across and this table will cover all four companies.</td></tr>`;
 
  /* leaderboard */
  const LR=reps().filter(x=>x.t>0).slice().sort((a,b)=>b.a-a.a);
@@ -972,9 +927,7 @@ function render(){
    <td><span class="chip" style="background:${CO[x.c].hex}22;color:${CO[x.c].hex}">${CO[x.c].short}</span></td>
    <td style="font-size:11.5px;color:var(--tx3)">${x.mgr===x.n?"—":x.mgr}</td>
    <td class="r"><b>${fM(a)}</b></td><td class="r">${fM(t)}</td>
-   <td class="r ${at>=100?"cg":at>=85?"ca":"cr"}">${at}%</td>
-   <td class="r">${incentiveOf(x)>0?fM(incentiveOf(x)*k()):'<span style="color:var(--tx3)">nil</span>'}</td>
-   <td class="r ${x.ar>5?"cr":""}">${x.ar>0?fM(x.ar):"—"}</td></tr>`;}).join("");
+   <td class="r ${at>=100?"cg":at>=85?"ca":"cr"}">${at}%</td></tr>`;}).join("");
 
  /* deals */
  let D=DEALS.filter(d=>keys().includes(d.c));
@@ -1026,8 +979,7 @@ const CONTRIB={
  projects:{add:true,f:c=>PROJ[c].val,fmt:v=>fA(v)},
  salesin:{add:true,f:c=>SALES[c].in*k(),fmt:v=>fA(v)},
  salesout:{add:true,f:c=>SALES[c].out*k(),fmt:v=>fA(v)},
- forecast:{add:true,f:c=>(SALES[c].out+FCST[c].pipeClose)*k(),fmt:v=>fA(v)},
- incentive:{add:true,f:c=>REPS.filter(x=>x.c===c).reduce((s,x)=>s+incentiveOf(x),0)*k(),fmt:v=>fA(v)}
+ forecast:{add:true,f:c=>(SALES[c].out+FCST[c].pipeClose)*k(),fmt:v=>fA(v)}
 };
 function inspectMetric(id,dim){
  const m=MET[id],C=CONTRIB[id];dim=dim||"co";
@@ -1044,7 +996,7 @@ function inspectMetric(id,dim){
   if(!C.add) return `<div class="ansbox">${m.n} is a rate and is not attributed per salesperson in the model. Analyse by Company, or pick Revenue, Open Pipeline or Calls for a salesperson split.<span class="src">Inspector</span></div>`;
   rows=reps().map(r=>{const cv=C.f(r.c),ct=REPS.filter(x=>x.c===r.c).reduce((s,x)=>s+x.t,0);
    return {k:r.n,v:id==="calls"?(r.calls||0)*k():id==="visits"?(r.visits||0)*k():id==="rev"?r.a*k()
-     :id==="incentive"?incentiveOf(r)*k():cv*r.t/ct};});
+     :cv*r.t/ct};});
  }
  rows=rows.filter(r=>r.v>0).sort((a,b)=>b.v-a.v).slice(0,8);
  if(!rows.length)return `<div class="ansbox">No data for ${m.n} in this selection.<span class="src">Inspector</span></div>`;
@@ -1065,7 +1017,7 @@ function inspectMetric(id,dim){
  return `<div class="ansbox">${verdict}<div style="margin-top:10px">${bars}</div>${corr?`<div style="margin-top:8px">${corr}</div>`:""}
   <span class="src">Inspector · ${m.n} by ${dimLbl} · scope ${S.co==="all"?"all companies":CO[S.co].name}, ${plb()}${m.snap?" · snapshot":""}</span></div>`;
 }
-const CQ=["Where will the month land?","Sales In versus Sales Out?","Which company is performing best?","Which sales manager is leading?","What is the incentive payout costing us?",
+const CQ=["Where will the month land?","Sales In versus Sales Out?","Which company is performing best?","Which sales manager is leading?",
  "How much cash is tied up in overdue receivables?","Why are we losing deals?",
  "Is the open pipeline enough for the rest of the year?","How is the Traderz counter performing?",
  "Which Hydroway brand is selling best?"];
@@ -1092,10 +1044,6 @@ function conciergeAnswer(q,plain){
   } else {
    body=`<b>${CO[rows[0].c].name} leads at ${rows[0].att}% of target</b>, followed by ${rows.slice(1).map(r=>CO[r.c].short+" "+r.att+"%").join(", ")}. All ${rows.length} companies are at or above plan, and group revenue is ${fA(A.actual)} against ${fA(A.target)} (${pc(A.actual,A.target)}%), with year-on-year growth of +${A.yoy.toFixed(1)}%.`;
   }
- } else if(t.includes("incentive")||t.includes("payout")||t.includes("costing")){
-  const gpv=A.actual*A.gm/100,pctgp=gpv>0?A.inc/gpv*100:0;
-  const top=reps().map(r=>({n:r.n,i:incentiveOf(r)*k(),att:pc(r.a,r.t)})).sort((a,b)=>b.i-a.i)[0];
-  body=`<b>Incentive payout is ${fA(A.inc)} this ${plb()}</b>, ${pctgp.toFixed(1)}% of the ${fA(gpv)} gross profit against a ${INC.budgetPctGP}% budget. ${A.qualifying} of ${A.repCount} people cleared the ${INC.threshold}% threshold. Largest single earner is ${top.n} at ${fA(top.i)} on ${top.att}% attainment. Note the tiers used here are illustrative — send the real scheme and this becomes exact.`;
  } else if(t.includes("project")){
   body=`<b>${fN(A.projN)} projects are live</b> with ${fA(A.projVal)} of linked pipeline — ${Math.round(A.projVal/Math.max(A.openPipe,1)*100)}% of the ${fA(A.openPipe)} Open Pipeline. The rest is transactional. Project business carries a ${Math.round(A.cycle)}-day cycle, so it needs different coverage assumptions from the Traderz counter.`;
  } else if(t.includes("manager")||t.includes("team")){
@@ -1130,7 +1078,7 @@ function conciergeAnswer(q,plain){
  return `<div class="ansbox">${body}<span class="src">${srcLine}</span></div>`;
 }
 const DPQ=[
- {q:"Suggest relationships",a:`<b>Relationships suggested</b> for EW_Group_Sales_Finance:<br>• Salesforce <code>Opportunity.OwnerId</code> → <code>User.Id</code> (high)<br>• Salesforce <code>User.ManagerId</code> → <code>User.Id</code> — gives the Sales Manager hierarchy for Electric Way (high)<br>• <code>Invoice</code> → <code>Account</code> and <code>Opportunity</code> (high)<br>• <code>Balance</code> → <code>Accounts</code> and <code>Invoice</code> (high) — gives AR ageing without touching Navision<br>• <code>Order</code> → <code>Opportunity</code> → <code>Projects</code> (high) — the project business chain<br>• <code>Sales Executive Monthly Target</code> → <code>User</code> by month (high)<br>• <code>Invoice</code> / <code>Order</code> line items → <code>Products</code> → <b>Brand</b> field (high) — this is how brand analysis is delivered; Brand is not on the transaction itself<br>• <code>User.Company</code> → company dimension (high) — already on the User record, so no mapping table needed<br>• Incentive model → <code>User</code> + target month (high)<br>Because these objects are native to the org, no Navision-to-Salesforce key mapping is needed for 19 of the 24 metrics.`},
+ {q:"Suggest relationships",a:`<b>Relationships suggested</b> for EW_Group_Sales_Finance:<br>• Salesforce <code>Opportunity.OwnerId</code> → <code>User.Id</code> (high)<br>• Salesforce <code>User.ManagerId</code> → <code>User.Id</code> — gives the Sales Manager hierarchy for Electric Way (high)<br>• <code>Invoice</code> → <code>Account</code> and <code>Opportunity</code> (high)<br>• <code>Balance</code> → <code>Accounts</code> and <code>Invoice</code> (high) — gives AR ageing without touching Navision<br>• <code>Order</code> → <code>Opportunity</code> → <code>Projects</code> (high) — the project business chain<br>• <code>Sales Executive Monthly Target</code> → <code>User</code> by month (high)<br>• <code>Invoice</code> / <code>Order</code> line items → <code>Products</code> → <b>Brand</b> field (high) — this is how brand analysis is delivered; Brand is not on the transaction itself<br>• <code>User.Company</code> → company dimension (high) — already on the User record, so no mapping table needed<br>Because these objects are native to the org, no Navision-to-Salesforce key mapping is needed for 19 of the 24 metrics.`},
  {q:"Generate a calculated field",a:`<b>Open Pipeline</b> generated for the per-company stage rule:<pre class="calc">CASE [Company]
   WHEN 'Electric Way' THEN
     IF [Stage] IN ('Proposal','Finalizing')
@@ -1142,7 +1090,7 @@ const DPQ=[
     IF [Stage] IN ('Data Collection','Potential / Tender',
                    'Active JIH','Submittal') THEN [Amount] END
 END</pre>Hold the stage-to-open mapping as a lookup table rather than hard-coded logic, so changes do not require editing the model.`},
- {q:"Check the model for issues",a:`<b>Six findings:</b><br>• 9 measures are balances (Open Pipeline, AR&gt;90d, backlog, inventory, DSO, CCC, coverage, credit, projects) with no snapshot date — a daily <code>Snapshot Date</code> is required before publishing them as metrics.<br>• Revenue grain: use <b>Invoice</b> consistently. Mixing Invoice and Order values in different metrics is the fastest way to make two cards disagree.<br>• No cost field on any Salesforce object — <b>Gross Profit and EBITDA cannot be computed from Salesforce alone</b>; item cost must come from Navision.<br>• Stage values differ by company (8 for Electric Way, 7 for Hydroway) — a conformed <code>Stage Group</code> dimension is needed for cross-company stage vizzes.<br>• Sales Manager is populated for 11 of 32 users; the rest resolve to “Not mapped”.<br>• Brand exists only on <b>Products</b>; any brand metric must aggregate through line items, so a transaction with no product link will drop out of brand views — check for unlinked lines.<br>• Incentive tiers are hard-coded in the calculation — hold them in the incentive model object so Finance can change rates without editing the semantic model.`},
+ {q:"Check the model for issues",a:`<b>Six findings:</b><br>• 9 measures are balances (Open Pipeline, AR&gt;90d, backlog, inventory, DSO, CCC, coverage, credit, projects) with no snapshot date — a daily <code>Snapshot Date</code> is required before publishing them as metrics.<br>• Revenue grain: use <b>Invoice</b> consistently. Mixing Invoice and Order values in different metrics is the fastest way to make two cards disagree.<br>• No cost field on any Salesforce object — <b>Gross Profit and EBITDA cannot be computed from Salesforce alone</b>; item cost must come from Navision.<br>• Stage values differ by company (8 for Electric Way, 7 for Hydroway) — a conformed <code>Stage Group</code> dimension is needed for cross-company stage vizzes.<br>• Sales Manager is populated for 11 of 32 users; the rest resolve to “Not mapped”.<br>• Brand exists only on <b>Products</b>; any brand metric must aggregate through line items, so a transaction with no product link will drop out of brand views — check for unlinked lines.`},
  {q:"Write field descriptions",a:`<b>Descriptions drafted</b>, which improves Concierge accuracy. Examples —<br><code>Open Pipeline</code>: “Opportunity value in the stages each company treats as live. Electric Way and Electric Way Arabia count Transactional, Proposal and Finalizing only.”<br><code>Customer Planner Adherence</code>: “Share of planned Traderz customer contacts actually completed in the period.”`}];
 function conciergeAsk(){$("cqAns").innerHTML=conciergeAnswer($("askMain").value||"Summarise performance");}
 function cqPick(i){$("askMain").value=CQ[i];$("cqAns").innerHTML=conciergeAnswer(CQ[i]);}
