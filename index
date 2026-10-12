@@ -1,0 +1,1356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EW Group CEO Command Centre — Tableau Next</title>
+<style>
+  :root{
+    --sf-blue:#0176D3; --sf-blue-d:#014486; --sf-navy:#032D60;
+    --bg:#F3F3F3; --card:#FFFFFF; --line:#C9C9C9; --line2:#E5E5E5;
+    --tx:#181818; --tx2:#444; --tx3:#747474;
+    --green:#2E844A; --green-bg:#EEF7F1;
+    --red:#BA0517; --red-bg:#FEF1F2;
+    --amber:#A86403; --amber-bg:#FEF6E6;
+    --teal:#06A59A; --purple:#9050E9; --orange:#D83A00;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:"Salesforce Sans","Helvetica Neue",Arial,sans-serif;background:var(--bg);color:var(--tx);font-size:13px;}
+  .mv,.num,td.r{font-variant-numeric:tabular-nums;}
+
+  .topbar{position:sticky;top:0;z-index:60;border-bottom:1px solid var(--line);box-shadow:0 1px 3px rgba(0,0,0,.06);}
+  .sfhdr{background:var(--sf-navy);color:#fff;display:flex;align-items:center;gap:12px;padding:8px 16px;}
+  .sfhdr .app{font-weight:700;font-size:14px;display:flex;align-items:center;gap:8px;}
+  .sfhdr .app .sq{display:inline-grid;grid-template-columns:repeat(2,6px);grid-template-rows:repeat(2,6px);gap:2px;}
+  .sfhdr .app .sq i{background:#1B96FF;} .sfhdr .app .sq i:nth-child(2){background:#FE9339;} .sfhdr .app .sq i:nth-child(3){background:#04E1CB;}
+  .sfhdr .crumb{font-size:12px;color:#B8C7DA;} .sfhdr .crumb b{color:#fff;}
+  .sfhdr .right{margin-left:auto;display:flex;gap:8px;}
+  .sfbtn{background:#fff;border:1px solid var(--line);color:var(--sf-blue);padding:5px 12px;border-radius:4px;font-size:12px;cursor:pointer;font-family:inherit;font-weight:600;}
+  .sfbtn:hover{background:#F3F8FE;}
+  .sfbtn.ghost{background:transparent;border-color:#4A6A94;color:#fff;} .sfbtn.ghost:hover{background:#0B3A6B;}
+  .sfbtn.brand{background:var(--sf-blue);border-color:var(--sf-blue);color:#fff;} .sfbtn.brand:hover{background:var(--sf-blue-d);}
+
+  .assetbar{background:#FAFBFC;border-bottom:1px solid var(--line2);padding:9px 16px;display:flex;gap:18px;flex-wrap:wrap;font-size:12px;color:var(--tx3);}
+  .assetbar b{color:var(--tx2);}
+
+  .filters{background:#fff;padding:10px 16px;display:flex;gap:16px;align-items:flex-end;flex-wrap:wrap;}
+  .fw{display:flex;flex-direction:column;gap:3px;}
+  .fw label{font-size:10.5px;color:var(--tx3);font-weight:600;}
+  .fw select{padding:5px 8px;font-size:12px;border:1px solid var(--line);border-radius:4px;background:#fff;min-width:170px;font-family:inherit;cursor:pointer;}
+  .fbtns{display:flex;gap:5px;}
+  .fbtn{padding:5px 12px;font-size:12px;border:1px solid var(--line);border-radius:4px;background:#fff;color:var(--sf-blue);cursor:pointer;font-family:inherit;font-weight:600;}
+  .fbtn.on{background:var(--sf-blue);border-color:var(--sf-blue);color:#fff;}
+
+  .wrap{max-width:1340px;margin:0 auto;padding:14px 16px 44px;}
+  .grid{display:grid;gap:12px;margin-bottom:12px;}
+  .g4{grid-template-columns:repeat(4,1fr);}
+  .g3{grid-template-columns:repeat(3,1fr);}
+  .g2{grid-template-columns:repeat(2,1fr);}
+  .g23{grid-template-columns:2fr 1fr;}
+
+  /* text widget */
+  .txt{background:#fff;border:1px solid var(--line2);border-radius:8px;padding:11px 14px;margin-bottom:12px;font-size:12.5px;line-height:1.6;color:var(--tx2);}
+  .txt b{color:var(--tx);}
+  .sect{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--tx3);margin:16px 2px 9px;}
+
+  /* metric widget — Tableau Next metric card: name, value, comparison vs prior period, trend */
+  .m{background:#fff;border:1px solid var(--line2);border-radius:8px;padding:13px 14px;cursor:pointer;}
+  .m:hover{border-color:var(--sf-blue);}
+  .m .mn{font-size:12px;color:var(--tx2);font-weight:600;}
+  .m .mn .snap{font-size:9.5px;background:#F3F3F3;border:1px solid var(--line2);border-radius:3px;padding:0 5px;color:var(--tx3);margin-left:5px;font-weight:700;}
+  .m .mv{font-size:24px;font-weight:700;margin-top:6px;line-height:1.1;}
+  .m .mc{font-size:11.5px;margin-top:4px;color:var(--tx3);}
+  .m .spark{margin-top:8px;display:block;}
+  .up{color:var(--green);font-weight:700;} .down{color:var(--red);font-weight:700;} .flat{color:var(--tx3);font-weight:700;}
+  .cf-g{color:var(--green);} .cf-a{color:var(--amber);} .cf-r{color:var(--red);}
+
+  .w{background:#fff;border:1px solid var(--line2);border-radius:8px;}
+  .w .wh{padding:10px 14px;border-bottom:1px solid var(--line2);display:flex;align-items:center;gap:8px;}
+  .w .wh h3{font-size:13px;font-weight:700;}
+  .w .wh .sub{font-size:11px;color:var(--tx3);font-weight:400;}
+  .w .wh .go{margin-left:auto;font-size:11px;color:var(--sf-blue);cursor:pointer;font-weight:600;}
+  .w .wh .go:hover{text-decoration:underline;}
+  .w .wh .kind{margin-left:8px;font-size:10px;color:var(--tx3);background:#F3F3F3;border:1px solid var(--line2);border-radius:3px;padding:1px 6px;font-weight:600;}
+  .w .wb{padding:13px 14px;}
+  .w .wb.tbl{padding:0;overflow-x:auto;}
+  .w .wb.tbl table{min-width:760px;}
+  .grid{align-items:stretch;}
+  .m{display:flex;flex-direction:column;}
+  .m .mfill{flex:1;}
+  .m .spark{margin-top:auto;padding-top:7px;}
+
+  .hb{display:grid;grid-template-columns:120px 1fr 62px;align-items:center;gap:9px;margin-bottom:7px;font-size:12px;}
+  .hb .lb{color:var(--tx2);text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .hb .tr{background:#EDEDED;height:15px;overflow:hidden;position:relative;}
+  .hb .tr i{display:block;height:100%;background:var(--sf-blue);}
+  .hb .vl{font-weight:700;text-align:right;}
+
+  table{width:100%;border-collapse:collapse;font-size:12px;}
+  th{text-align:left;font-size:10.5px;text-transform:uppercase;color:var(--tx3);font-weight:700;padding:7px 9px;border-bottom:1px solid var(--line);background:#FAFAFA;}
+  td{padding:7px 9px;border-bottom:1px solid var(--line2);}
+  tr:last-child td{border-bottom:none;}
+  td.r,th.r{text-align:right;}
+  tbody tr.click{cursor:pointer;} tbody tr.click:hover td{background:#F3F8FE;}
+  tr.sel td{background:#EEF4FF;}
+  .cg{background:var(--green-bg);color:var(--green);font-weight:700;}
+  .ca{background:var(--amber-bg);color:var(--amber);font-weight:700;}
+  .cr{background:var(--red-bg);color:var(--red);font-weight:700;}
+  .chip{display:inline-block;padding:1px 7px;border-radius:10px;font-size:10.5px;font-weight:700;}
+  .lnk{color:var(--sf-blue);font-weight:600;cursor:pointer;}
+
+  .act{display:flex;gap:9px;flex-wrap:wrap;}
+  .actbtn{background:#fff;border:1px solid var(--sf-blue);color:var(--sf-blue);border-radius:4px;padding:7px 12px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;}
+  .actbtn:hover{background:#F3F8FE;}
+  .note{font-size:11px;color:var(--tx3);margin-top:9px;line-height:1.55;}
+  .legend{display:flex;gap:14px;font-size:11.5px;color:var(--tx2);margin-bottom:8px;flex-wrap:wrap;}
+  .legend i{display:inline-block;width:10px;height:10px;margin-right:5px;}
+
+  /* panels (side panel = Concierge; page = metric detail / definitions dashboard) */
+  .pg{display:none;position:fixed;inset:0;background:var(--bg);z-index:80;overflow:auto;}
+  .pg.open{display:block;}
+  .pgbar{background:#fff;border-bottom:1px solid var(--line);padding:10px 16px;display:flex;align-items:center;gap:12px;position:sticky;top:0;}
+  .pgbar .nm{font-size:14px;font-weight:700;}
+  .pgbar .sc{margin-left:auto;font-size:11.5px;color:var(--tx3);}
+  .pgwrap{max-width:1060px;margin:0 auto;padding:14px 16px 44px;}
+  .blk{background:#fff;border:1px solid var(--line2);border-radius:8px;padding:13px 15px;margin-bottom:10px;}
+  .blk h4{font-size:11px;text-transform:uppercase;color:var(--tx3);font-weight:700;margin-bottom:7px;}
+  .blk p{font-size:12.5px;line-height:1.65;color:var(--tx2);}
+  .defrow{display:grid;grid-template-columns:180px 1fr;gap:6px 14px;font-size:12.5px;}
+  .defrow .k{color:var(--tx3);font-weight:600;}
+  pre.calc{background:#F7F9FB;border:1px solid var(--line2);border-left:3px solid var(--sf-blue);padding:11px 13px;font-family:Consolas,monospace;font-size:11.5px;line-height:1.6;color:#032D60;overflow-x:auto;white-space:pre;}
+  .hero{background:#fff;border:1px solid var(--line2);border-radius:8px;padding:16px 18px;margin-bottom:12px;display:flex;gap:30px;align-items:flex-end;flex-wrap:wrap;}
+  .hero .big{font-size:32px;font-weight:700;line-height:1;}
+  .hero .lab{font-size:10.5px;color:var(--tx3);font-weight:600;margin-bottom:4px;}
+  .hero .side{font-size:15px;font-weight:700;color:var(--tx2);}
+  .warn{background:var(--amber-bg);border:1px solid #F5D9A0;border-radius:6px;padding:9px 12px;font-size:12px;color:#6B4200;margin-bottom:10px;}
+  .relbtn{background:#fff;border:1px solid var(--line);color:var(--sf-blue);border-radius:4px;padding:5px 10px;font-size:11.5px;cursor:pointer;margin:3px 5px 0 0;font-family:inherit;font-weight:600;}
+
+  .sp{display:none;position:fixed;top:0;right:0;bottom:0;width:400px;background:#fff;border-left:1px solid var(--line);box-shadow:-3px 0 14px rgba(0,0,0,.12);z-index:90;overflow:auto;}
+  .sp.open{display:block;}
+  .sph{padding:12px 15px;border-bottom:1px solid var(--line2);display:flex;align-items:center;gap:8px;}
+  .sph h3{font-size:13px;font-weight:700;}
+  .spb{padding:13px 15px;}
+  .cx{background:#F8F9FB;border:1px solid var(--line2);border-radius:6px;padding:10px 12px;margin-bottom:9px;font-size:12px;}
+  .cx .q{font-weight:700;color:var(--sf-blue-d);margin-bottom:4px;}
+  .cx .a{color:var(--tx2);line-height:1.6;}
+  .askrow{display:flex;gap:7px;margin-top:10px;}
+  .askrow input{flex:1;padding:7px 9px;border:1px solid var(--line);border-radius:4px;font-size:12px;font-family:inherit;}
+  .toast{display:none;position:fixed;bottom:18px;left:50%;margin-left:-200px;width:400px;background:#fff;border:1px solid var(--line);border-left:4px solid var(--green);border-radius:6px;padding:11px 14px;font-size:12px;box-shadow:0 4px 14px rgba(0,0,0,.16);z-index:100;}
+  .toast.open{display:block;} .toast b{display:block;margin-bottom:2px;} .toast .s{color:var(--tx3);font-size:11px;}
+
+  @media(max-width:1000px){.g4{grid-template-columns:1fr 1fr;}.g3,.g23{grid-template-columns:1fr;}.sp{width:100%;}}
+  @media(max-width:620px){.g4,.g2{grid-template-columns:1fr;}.topbar{position:static;}}
+
+  /* Agentforce */
+  .af{background:#fff;border:1px solid #D5DAFB;border-radius:8px;}
+  .af .wh{padding:10px 14px;border-bottom:1px solid #E6E9FD;display:flex;align-items:center;gap:8px;}
+  .af .wh h3{font-size:13px;font-weight:700;color:#3D3FA8;}
+  .af .wh .sub{font-size:11px;color:var(--tx3);font-weight:400;}
+  .af .wh .kind{margin-left:auto;font-size:10px;color:#5867E8;background:#EEF0FE;border:1px solid #D5DAFB;border-radius:3px;padding:1px 6px;font-weight:700;}
+  .af .wb{padding:13px 14px;}
+  .chipq{display:inline-block;background:#F6F7FF;border:1px solid #D5DAFB;color:#3D3FA8;border-radius:14px;padding:5px 11px;font-size:11.5px;font-weight:600;cursor:pointer;margin:0 6px 6px 0;font-family:inherit;}
+  .chipq:hover{background:#E8EBFE;}
+  .ansbox{background:#F8F9FB;border:1px solid var(--line2);border-left:3px solid #5867E8;border-radius:5px;padding:11px 13px;font-size:12.5px;line-height:1.65;color:var(--tx2);margin-top:10px;}
+  .ansbox b{color:var(--tx);}
+  .ansbox .src{display:block;margin-top:7px;font-size:10.5px;color:var(--tx3);}
+  .beta{background:#EEF0FE;color:#5867E8;border:1px solid #D5DAFB;border-radius:3px;padding:0 5px;font-size:9.5px;font-weight:700;margin-left:5px;vertical-align:1px;}
+  .rank{display:grid;grid-template-columns:150px 1fr 74px;align-items:center;gap:9px;margin-bottom:6px;font-size:12px;}
+  .rank .lb{color:var(--tx2);text-align:right;}
+  .rank .tr{background:#EDEDED;height:14px;}
+  .rank .tr i{display:block;height:100%;background:#5867E8;}
+  .rank .vl{font-weight:700;text-align:right;}
+  .skillrow{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--line2);font-size:12px;}
+  .skillrow:last-child{border-bottom:none;}
+  .skillrow .ic{width:26px;height:26px;border-radius:5px;background:#EEF0FE;color:#5867E8;display:flex;align-items:center;justify-content:center;font-weight:700;flex:none;}
+  .skillrow .nm{font-weight:700;}
+  .skillrow .ds{color:var(--tx3);font-size:11.5px;margin-top:1px;}
+
+  /* CEO chat — Concierge in Tableau Next, or an Agentforce employee agent */
+  .chatfab{position:fixed;bottom:22px;right:22px;z-index:95;background:var(--sf-blue);color:#fff;border:none;
+    border-radius:26px;padding:12px 20px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;
+    box-shadow:0 3px 12px rgba(1,118,211,.35);display:flex;align-items:center;gap:8px;}
+  .chatfab:hover{background:var(--sf-blue-d);}
+  .chatfab .dot{width:8px;height:8px;border-radius:50%;background:#7CE7C1;}
+  .sp{width:440px;}
+  .chatwrap{display:flex;flex-direction:column;height:calc(100vh - 54px);}
+  .chatlog{flex:1;overflow-y:auto;padding:13px 15px;background:#FAFBFC;}
+  .bub{max-width:86%;margin-bottom:11px;font-size:12.5px;line-height:1.6;}
+  .bub.me{margin-left:auto;background:var(--sf-blue);color:#fff;border-radius:12px 12px 3px 12px;padding:9px 12px;}
+  .bub.ai{background:#fff;border:1px solid var(--line2);border-radius:12px 12px 12px 3px;padding:11px 13px;color:var(--tx2);}
+  .bub.ai b{color:var(--tx);}
+  .bub.ai .src{display:block;margin-top:7px;font-size:10.5px;color:var(--tx3);}
+  .bub.sys{background:#EEF4FF;border:1px solid #CFE2FF;border-radius:8px;padding:9px 12px;color:var(--sf-blue-d);font-size:11.5px;max-width:100%;}
+  .chatin{border-top:1px solid var(--line2);padding:11px 15px;background:#fff;}
+  .chatin .row{display:flex;gap:7px;}
+  .chatin input{flex:1;padding:9px 11px;border:1px solid var(--line);border-radius:18px;font-size:12.5px;font-family:inherit;}
+  .sugg{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:9px;}
+  .eng{display:flex;gap:6px;margin-bottom:10px;}
+  .engbtn{flex:1;border:1px solid var(--line);background:#fff;border-radius:6px;padding:7px 9px;font-size:11px;cursor:pointer;font-family:inherit;text-align:left;color:var(--tx2);}
+  .engbtn.on{border-color:var(--sf-blue);background:#F3F8FE;color:var(--sf-blue-d);font-weight:700;}
+  .engbtn span{display:block;font-size:10px;color:var(--tx3);font-weight:400;margin-top:1px;}
+</style></head>
+<body>
+
+<div class="topbar">
+<div class="sfhdr">
+  <span class="app"><span class="sq"><i></i><i></i><i></i><i></i></span> Tableau Next</span>
+  <span class="crumb">Workspace: EW Group Analytics / Dashboards / <b>Group CEO Command Centre</b></span>
+  <span class="right">
+    <button class="sfbtn ghost" onclick="openConcierge()">Ask Concierge</button>
+    <button class="sfbtn ghost" onclick="toast('Share dashboard','Shared with Tableau Next Consumer users in the EW Group Analytics workspace. Slack delivery is not enabled on your licences.')">Share</button>
+    <button class="sfbtn ghost" onclick="openDefs()">Metric definitions</button>
+  </span>
+</div>
+
+<div class="assetbar">
+  <span><b>Semantic model:</b> EW_Group_Sales_Finance</span>
+  <span><b>Data:</b> Data 360 — Salesforce (zero-copy) + Navision for GL/stock</span>
+  <span><b>Metrics:</b> 33 published</span>
+  <span><b>Refreshed:</b> today 6:00 AM</span>
+  <span id="scopeLbl"></span>
+</div>
+
+<div class="filters">
+  <div class="fw"><label>Period</label>
+    <div class="fbtns" id="pBtns">
+      <button class="fbtn" data-p="today">Today</button>
+      <button class="fbtn on" data-p="mtd">MTD</button>
+      <button class="fbtn" data-p="qtd">QTD</button>
+      <button class="fbtn" data-p="ytd">YTD</button>
+    </div>
+  </div>
+  <div class="fw"><label>Company</label>
+    <select id="coSel">
+      <option value="all">All Companies</option>
+      <option value="EW">Electric Way — Dubai</option>
+      <option value="EWA">Electric Way Arabia — KSA</option>
+      <option value="HYD">Hydroway — Deira</option>
+      <option value="TRZ">Traderz — Deira</option>
+    </select>
+  </div>
+  <div class="fw"><label>Sales Manager</label><select id="mgrSel"></select></div>
+  <div class="fw"><label>Salesperson</label><select id="repSel"></select></div>
+  <div class="fw"><label>Brand</label><select id="brSel"></select></div>
+</div>
+</div>
+
+<div class="wrap">
+
+
+  <div class="sect">Performance</div>
+  <div class="grid g4" id="r1"></div>
+  <div class="sect">Sales efficiency</div>
+  <div class="grid g4" id="r3"></div>
+  <div class="sect">Working capital, service &amp; risk</div>
+  <div class="grid g4" id="r4"></div>
+
+  <div class="sect">Forecasting, Sales In &amp; Sales Out</div>
+  <div class="grid g4" id="r7"></div>
+  <div class="grid g2">
+    <div class="w">
+      <div class="wh"><h3>Sales In vs Sales Out</h3><span class="sub">orders received vs invoiced, AED M</span><span class="go" onclick="openMetric('salesin')">Open metric →</span><span class="kind">VIZ · LINE</span></div>
+      <div class="wb"><div class="legend"><span><i style="background:#0176D3"></i>Sales In (Order)</span><span><i style="background:#2E844A"></i>Sales Out (Invoice)</span></div><svg id="sioSvg" viewBox="0 0 560 170" width="100%" style="cursor:pointer" onclick="openMetric('salesin')"></svg><div class="note" id="sioNote"></div></div>
+    </div>
+    <div class="w">
+      <div class="wh"><h3>Month-end forecast vs target</h3><span class="sub" id="fcSub"></span><span class="go" onclick="openMetric('forecast')">Open metric →</span><span class="kind">VIZ · BAR</span></div>
+      <div class="wb" id="fcViz"></div>
+    </div>
+  </div>
+
+  <div class="sect">Projects &amp; incentive</div>
+  <div class="grid g4" id="r6"></div>
+
+  <div class="sect">Traderz — trading counter activity</div>
+  <div class="grid g4" id="r5"></div>
+
+  <div class="sect">Agentforce</div>
+  <div class="grid g3">
+    <div class="af">
+      <div class="wh"><h3>Concierge</h3><span class="sub">ask the semantic model</span><span class="kind">SKILL · GA</span></div>
+      <div class="wb">
+        <div id="cqChips"></div>
+        <div class="askrow"><input id="askMain" placeholder="Ask your own question" onkeydown="if(event.key==='Enter')conciergeAsk()"><button class="sfbtn brand" onclick="conciergeAsk()">Ask</button></div>
+        <div class="act" style="margin-top:9px"><button class="actbtn" onclick="openConcierge()">Open full chat</button></div>
+        <div id="cqAns"></div>
+      </div>
+    </div>
+    <div class="af">
+      <div class="wh"><h3>Inspector</h3><span class="sub">analyse what moved a metric</span><span class="kind">SKILL · GA</span></div>
+      <div class="wb">
+        <div style="display:flex;gap:7px">
+          <select id="inspSel" style="flex:1;padding:5px 8px;font-size:12px;border:1px solid var(--line);border-radius:4px;font-family:inherit"></select>
+          <select id="inspDim" style="width:132px;padding:5px 8px;font-size:12px;border:1px solid var(--line);border-radius:4px;font-family:inherit">
+            <option value="co">by Company</option>
+            <option value="mgr">by Manager</option>
+            <option value="rep">by Salesperson</option>
+          </select>
+        </div>
+        <button class="sfbtn brand" style="margin-top:8px" onclick="inspectRun()">Analyse metric</button>
+        <div id="inspAns"></div>
+        <div class="note">On-demand analysis is available now. <b>Proactive alerts</b> pushed to Slack are <span class="beta">BETA</span>.</div>
+      </div>
+    </div>
+    <div class="af">
+      <div class="wh"><h3>Data Pro</h3><span class="sub">semantic modelling assistance</span><span class="kind">SKILL · GA</span></div>
+      <div class="wb"><div id="dpChips"></div><div id="dpAns"></div>
+        <div class="note">Data Pro assists the Creator building the model, not the CEO reading it.</div>
+        <div class="act" style="margin-top:10px"><button class="actbtn" onclick="openCaps()">See all 10 licensed Agentforce features</button></div></div>
+    </div>
+  </div>
+
+  <div class="sect">Vizzes</div>
+  <div class="grid g23">
+    <div class="w">
+      <div class="wh"><h3>Revenue by month and company</h3><span class="sub">AED M</span><span class="go" onclick="openMetric('rev')">Open metric →</span><span class="kind">VIZ · STACKED BAR</span></div>
+      <div class="wb"><div class="legend" id="lgd"></div><svg id="trend" viewBox="0 0 560 180" width="100%" style="cursor:pointer" onclick="openMetric('rev')"></svg></div>
+    </div>
+    <div class="w">
+      <div class="wh"><h3>Opportunity stages</h3><span class="sub" id="stgSub"></span><span class="go" onclick="openMetric('openpipe')">Open metric →</span><span class="kind">VIZ · BAR</span></div>
+      <div class="wb" id="stage"></div>
+    </div>
+  </div>
+
+  <div class="grid g3">
+    <div class="w"><div class="wh"><h3>Revenue by brand</h3><span class="sub" id="brSub"></span><span class="go" onclick="openMetric('rev')">Open metric →</span><span class="kind">VIZ · BAR</span></div><div class="wb" id="brandViz"></div></div>
+    <div class="w"><div class="wh"><h3>Lost value by reason</h3><span class="sub" id="lsub"></span><span class="go" onclick="openMetric('win')">Open metric →</span><span class="kind">VIZ · BAR</span></div><div class="wb" id="loss"></div></div>
+    <div class="w"><div class="wh"><h3>AR ageing</h3><span class="sub">snapshot, AED M</span><span class="go" onclick="openMetric('ar90')">Open metric →</span><span class="kind">VIZ · BAR</span></div><div class="wb" id="ar"></div></div>
+  </div>
+
+  <div class="w" style="margin-bottom:12px">
+    <div class="wh"><h3>Four-company comparison</h3><span class="sub">conditional formatting · click a row to filter</span><span class="go" onclick="openMetric('att')">Open metric →</span><span class="kind">VIZ · TABLE</span></div>
+    <div class="wb tbl"><table>
+      <thead><tr><th>Company</th><th>Focus</th><th class="r">Attain %</th><th class="r">Win %</th><th class="r">GM %</th><th class="r">EBITDA %</th><th class="r">DSO</th><th class="r">Fill %</th><th class="r">OTD %</th><th class="r">AR&gt;90d</th><th class="r">YoY %</th></tr></thead>
+      <tbody id="bench"></tbody></table></div>
+  </div>
+
+  <div class="w" style="margin-bottom:12px">
+    <div class="wh"><h3>Sales manager performance</h3><span class="sub">Electric Way team structure · click to filter</span><span class="go" onclick="openMetric('att')">Open metric →</span><span class="kind">VIZ · TABLE</span></div>
+    <div class="wb tbl"><table>
+      <thead><tr><th>Sales Manager</th><th>Company</th><th class="r">Team size</th><th class="r">Actual</th><th class="r">Target</th><th class="r">Attain.</th><th class="r">Win %</th><th class="r">AR&gt;180d</th></tr></thead>
+      <tbody id="mgrTbl"></tbody></table></div>
+  </div>
+
+  <div class="w" style="margin-bottom:12px">
+    <div class="wh"><h3>Salesperson leaderboard</h3><span class="sub">click a row to filter · AED M</span><span class="go" onclick="openMetric('rev')">Open metric →</span><span class="kind">VIZ · TABLE</span></div>
+    <div class="wb tbl"><table>
+      <thead><tr><th>#</th><th>Salesperson</th><th>Role</th><th>Company</th><th>Reports to</th><th class="r">Actual</th><th class="r">Target</th><th class="r">Attain.</th><th class="r">Incentive</th><th class="r">AR&gt;180d</th></tr></thead>
+      <tbody id="lb"></tbody></table></div>
+  </div>
+
+  <div class="w" style="margin-bottom:12px">
+    <div class="wh"><h3>Deals closing in 30 days</h3><span class="sub" id="dsub"></span><span class="go" onclick="openMetric('openpipe')">Open metric →</span><span class="kind">VIZ · TABLE + URL ACTION</span></div>
+    <div class="wb tbl"><table>
+      <thead><tr><th>Opportunity</th><th>Company</th><th class="r">Amount (AED)</th><th class="r">Close</th><th>Stage</th><th>Owner</th><th></th></tr></thead>
+      <tbody id="deals"></tbody></table></div>
+  </div>
+
+  <div class="sect">Actions</div>
+  <div class="w">
+    <div class="wh"><h3>Act on what you see</h3><span class="sub">button widgets bound to Salesforce Flows</span><span class="kind">FLOW ACTIONS</span></div>
+    <div class="wb"><div class="act">
+      <button class="actbtn" onclick="flow('Create collections tasks for AR over 90 days')">Create collections tasks</button>
+      <button class="actbtn" onclick="flow('Notify procurement of No-Stock losses')">Notify procurement</button>
+      <button class="actbtn" onclick="flow('Schedule sales manager review')">Schedule manager review</button>
+      <button class="actbtn" onclick="flow('Assign dormant accounts to the Traderz calling planner')">Assign dormant accounts to planner</button>
+        <button class="actbtn" onclick="ceoBrief()">Generate CEO brief (Prompt Template)</button>
+        <button class="actbtn" onclick="flow('Hand unworked inbound leads to the SDR Agent')">Send leads to SDR Agent</button>
+        <button class="actbtn" onclick="flow('Book Sales Coach sessions for reps below target')">Book coaching sessions</button>
+    </div></div>
+
+  <div class="sect">Notes &amp; reference</div>
+  <div class="txt" id="orgNote"></div>
+  <div class="txt">
+    <b>Data coverage.</b> Your Salesforce objects — Lead, Account, Contact, Project, Opportunity, Quote, Order, Invoice, Balance, Products, Sales Executive Monthly Target and the incentive model — come into Data 360 by <b>zero-copy</b>, covering most of this dashboard including Sales In (Order), Sales Out (Invoice), AR ageing (Balance) and the forecast.
+    <b>Reading Navision directly.</b> Data 360 offers 270+ connectors plus MuleSoft, and ingested data lands in <b>Data Lake Objects</b> mapped to <b>Data Model Objects</b> — <u>not</u> Salesforce custom objects. So for the gaps below you point at Navision itself; you do not stage data into Salesforce first. Two supported routes: MuleSoft's Database connector over JDBC to the Navision SQL Server (or its Dynamics 365 connector) feeding the Ingestion API, or replicate Navision into a cloud warehouse and use a <b>zero-copy</b> connector.
+    <b>Gaps that need Navision:</b> item cost for gross margin, G/L accounts for EBITDA, inventory value and days of stock, payable days for the cash conversion cycle, and promised-vs-actual delivery dates for On-Time Delivery.
+  </div>
+  <div class="txt">
+    <b>Your licences cover this build.</b> Tableau Next Creator 5 (2 used, 3 free) — one is yours for building. Tableau Next Consumer 15 (8 free) — enough for the CEO plus the four company heads to open the dashboard. Tableau Next Limited Consumer 100,010 for wider embedded viewing. Agentforce entitlements are present (Agent platform builder, Agentforce Coworker, Einstein AI Skills Manager, Einstein Prompt Templates), which is what Concierge, Inspector and Data Pro run on.
+    <b>Not licensed:</b> Slack delivery — so sharing here is in-platform to Consumer users, and metrics are "followed" rather than pushed to a channel.
+    <b>Confirm with your admin:</b> that <b>Data 360</b> is provisioned with enough credits, since Tableau Next reads through it and it is also the route for Navision. Nothing in the licence list above proves Data 360 capacity.
+  </div>
+  </div>
+</div>
+
+<div class="pg" id="mp">
+  <div class="pgbar"><button class="sfbtn" onclick="close_('mp')">← Back to dashboard</button><span class="nm" id="mpN"></span><span class="sc" id="mpS"></span></div>
+  <div class="pgwrap" id="mpB"></div>
+</div>
+<div class="pg" id="dp">
+  <div class="pgbar"><button class="sfbtn" onclick="close_('dp')">← Back to dashboard</button><span class="nm">Metric definitions</span><span class="sc">Separate dashboard built from text widgets</span></div>
+  <div class="pgwrap" id="dpB"></div>
+</div>
+<div class="sp" id="sp">
+  <div class="sph"><h3 id="chatTitle">Ask Concierge</h3><button class="sfbtn" style="margin-left:auto" onclick="close_('sp')">Close</button></div>
+  <div class="chatwrap">
+    <div class="chatlog" id="chatLog"></div>
+    <div class="chatin">
+      <div class="eng" id="engRow"></div>
+      <div class="sugg" id="chatSugg"></div>
+      <div class="row">
+        <input id="ask" placeholder="Ask about performance, cash, brands, people..." onkeydown="if(event.key==='Enter')askIt()">
+        <button class="sfbtn brand" onclick="askIt()">Send</button>
+      </div>
+      <div class="note" id="engNote"></div>
+    </div>
+  </div>
+</div>
+<button class="chatfab" onclick="openConcierge()"><span class="dot"></span> Ask about this dashboard</button>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ═══════════ ORGANISATION — as provided by EW Group ═══════════ */
+const CO={
+ EW:{name:"Electric Way",short:"EW",loc:"Dubai",biz:"Sale &amp; distribution of electrical cable, wire and accessories",hex:"#0176D3"},
+ EWA:{name:"Electric Way Arabia",short:"EWA",loc:"Saudi Arabia",biz:"Same model as Electric Way, operating in KSA",hex:"#9050E9"},
+ HYD:{name:"Hydroway",short:"HYD",loc:"Deira, Dubai",biz:"Sale &amp; distribution of pumps and motors — KSB, CALPAK, DOORI, DAB",hex:"#06A59A"},
+ TRZ:{name:"Traderz",short:"TRZ",loc:"Deira, Dubai",biz:"Trading counter — customer calls and visits, customer planner, daily calls",hex:"#D83A00"}};
+
+/* Opportunity stages per company. open:true = counts toward Open Pipeline */
+const STAGES={
+ EW:[["Transactional",265,false],["Future",205,false],["Bidding",235,false],["Proposal",513,true],["Finalizing",222,true],["Purchase Order",120,false],["Execution",94,false]],
+ EWA:[["Transactional",77,false],["Future",51,false],["Bidding",68,false],["Proposal",152,true],["Finalizing",63,true],["Purchase Order",30,false],["Execution",26,false]],
+ HYD:[["Data Collection",51,true],["Potential / Tender",68,true],["Active JIH",77,true],["Submittal",34,true],["Purchase Order",26,false],["Execution",21,false]],
+ TRZ:[["Transactional",60,false],["Proposal",70,true],["Finalizing",34,true],["Purchase Order",13,false]]};
+const STAGE_RULE={
+ EW:"Open Opportunity = Proposal + Finalizing only. Transactional, Future, Bidding, Purchase Order and Execution are excluded.",
+ EWA:"Open Opportunity = Proposal + Finalizing only, same rule as Electric Way.",
+ HYD:"Open Pipeline assumed = Data Collection + Potential/Tender + Active JIH + Submittal — please confirm",
+ TRZ:"Open Opportunity = Proposal + Finalizing only, same rule as Electric Way, which Traderz trades for."};
+
+/* Users. mgr = reporting line; brands = Hydroway brand coverage; calls/visits = Traderz activity */
+const REPS=[
+ /* ELECTRIC WAY - Dubai */
+ {n:"Amin",c:"EW",role:"Sales Manager",mgr:"Amin",a:8.6,t:7.7,ar:4.7,w:8,l:9},
+ {n:"Priyesh Pattali",c:"EW",role:"Sales Executive",mgr:"Amin",a:6.2,t:5.6,ar:2.1,w:6,l:7},
+ {n:"Irfan",c:"EW",role:"Sales Executive",mgr:"Amin",a:5.8,t:5.1,ar:1.7,w:6,l:7},
+ {n:"Syed Mutuza",c:"EW",role:"Sales Manager",mgr:"Syed Mutuza",a:7.1,t:6.4,ar:3.4,w:7,l:8},
+ {n:"Saif",c:"EW",role:"Sales Executive",mgr:"Syed Mutuza",a:5.1,t:4.7,ar:1.3,w:5,l:6},
+ {n:"Haroon",c:"EW",role:"Sales Executive",mgr:"Syed Mutuza",a:4.6,t:4.3,ar:0.9,w:5,l:6},
+ {n:"Abdur Rahim",c:"EW",role:"Sales Executive",mgr:"Syed Mutuza",a:4.5,t:4.3,ar:1.3,w:5,l:6},
+ {n:"Shadab",c:"EW",role:"Sales Executive",mgr:"Syed Mutuza",a:4.1,t:3.9,ar:0.9,w:4,l:5},
+ {n:"Sujeet Kumar",c:"EW",role:"Sales Manager",mgr:"Sujeet Kumar",a:7.4,t:6.9,ar:2.6,w:7,l:8},
+ {n:"Asulabha Sathyan",c:"EW",role:"Sales Executive",mgr:"Sujeet Kumar",a:4.1,t:3.9,ar:0.9,w:4,l:5},
+ {n:"Manish Kumar",c:"EW",role:"Sales Executive",mgr:"Sujeet Kumar",a:4.0,t:4.3,ar:1.3,w:4,l:5},
+ /* ELECTRIC WAY ARABIA - Saudi Arabia */
+ {n:"Salahuddin",c:"EWA",role:"Sales",mgr:"Not mapped",a:4.7,t:4.5,ar:1.3,w:5,l:6},
+ {n:"Nisfan",c:"EWA",role:"Sales",mgr:"Not mapped",a:3.9,t:3.8,ar:0.9,w:4,l:5},
+ {n:"Affan",c:"EWA",role:"Sales",mgr:"Not mapped",a:3.7,t:3.5,ar:0.9,w:4,l:5},
+ {n:"Abdullah",c:"EWA",role:"Sales",mgr:"Not mapped",a:2.7,t:2.6,ar:0.4,w:3,l:4},
+ /* HYDROWAY - Deira, Dubai - reporting to Sandeep Rohila (GM) */
+ {n:"Sandeep Rohila",c:"HYD",role:"General Manager",mgr:"Sandeep Rohila",a:0,t:0,ar:0,w:0,l:0},
+ {n:"Ashok",c:"HYD",role:"Sales",mgr:"Sandeep Rohila",brands:["KSB","CALPAK","DOORI","DAB"],a:2.7,t:2.6,ar:0.4,w:4,l:4},
+ {n:"Manohar",c:"HYD",role:"Sales",mgr:"Sandeep Rohila",brands:["DAB","DOORI"],a:2.1,t:2.1,ar:0.4,w:3,l:3},
+ {n:"Ravi",c:"HYD",role:"Sales",mgr:"Sandeep Rohila",brands:["KSB","DOORI"],a:2.4,t:2.3,ar:0.4,w:4,l:4},
+ {n:"Abbas",c:"HYD",role:"Sales",mgr:"Sandeep Rohila",brands:["DAB","DOORI"],a:1.8,t:1.8,ar:0.2,w:3,l:3},
+ {n:"Yasser",c:"HYD",role:"Sales",mgr:"Sandeep Rohila",brands:["CALPAK","DOORI"],a:1.7,t:1.7,ar:0.2,w:3,l:4},
+ {n:"Anas",c:"HYD",role:"Sales",mgr:"Sandeep Rohila",brands:["KSB","CALPAK","DOORI","DAB"],a:1.4,t:1.4,ar:0.2,w:3,l:3},
+ {n:"Mudassir",c:"HYD",role:"Sales",mgr:"Sandeep Rohila",brands:["CALPAK","DOORI"],a:0.7,t:0.8,ar:0.2,w:2,l:2},
+ /* TRADERZ - Deira, Dubai - reporting to Farhat Hussain */
+ {n:"Farhat Hussain",c:"TRZ",role:"Manager",mgr:"Farhat Hussain",a:0,t:0,ar:0,w:0,l:0},
+ {n:"Ajay Ram",c:"TRZ",role:"Trading",mgr:"Farhat Hussain",a:1.93,t:1.71,ar:0.13,w:16,l:9,calls:245,visits:42},
+ {n:"Thauseef",c:"TRZ",role:"Trading",mgr:"Farhat Hussain",a:1.58,t:1.41,ar:0.09,w:14,l:8,calls:222,visits:38},
+ {n:"Shahad",c:"TRZ",role:"Trading",mgr:"Farhat Hussain",a:1.41,t:1.24,ar:0.09,w:13,l:8,calls:205,visits:36},
+ {n:"Shameer",c:"TRZ",role:"Trading",mgr:"Farhat Hussain",a:1.29,t:1.16,ar:0.09,w:12,l:7,calls:198,visits:34},
+ {n:"Dipti",c:"TRZ",role:"Trading",mgr:"Farhat Hussain",a:1.20,t:1.07,ar:0.04,w:11,l:7,calls:190,visits:31},
+ {n:"Jishnu",c:"TRZ",role:"Trading",mgr:"Farhat Hussain",a:1.11,t:1.03,ar:0.04,w:10,l:7,calls:181,visits:29},
+ {n:"Harish",c:"TRZ",role:"Trading",mgr:"Farhat Hussain",a:1.03,t:0.94,ar:0.04,w:10,l:6,calls:172,visits:28},
+ {n:"Ilyas",c:"TRZ",role:"Trading",mgr:"Farhat Hussain",a:0.94,t:0.86,ar:0.04,w:9,l:6,calls:160,visits:26},
+ {n:"Suhail",c:"TRZ",role:"Trading",mgr:"Farhat Hussain",a:0.90,t:0.77,ar:0.04,w:9,l:6,calls:150,visits:31},
+ {n:"Talattuf",c:"TRZ",role:"Trading",mgr:"Farhat Hussain",a:0.61,t:0.51,ar:0.04,w:7,l:5,calls:127,visits:25}];
+
+/* Brand revenue, MTD AED M */
+const BRAND={
+ EW:{"Ducab":18.6,"Nexans":9.0,"OMAN":6.4,"ABB":5.1,"MENNEKES":4.1,"Top Cable":3.6,"LS":3.4,
+     "Tridonic":2.7,"Eco Link":2.1,"Kopex":1.8,"Ducab Connect":1.5,"ETE":1.2,"Tylon":0.9,"Axes":0.7,"EVBox":0.4},
+ EWA:{"Nexans":4.5,"RR Cable":3.35,"Ducab":3.1,"MENNEKES":1.7,"Philips":1.3,"Axes":0.65,"PCE":0.4},
+ HYD:{"DAB":4.1,"KSB":3.8,"DOORI":3.2,"CALPAK":1.7},
+ /* Traderz trades the Electric Way brand portfolio */
+ TRZ:{"Ducab":4.0,"Nexans":1.8,"OMAN":1.4,"ABB":1.1,"MENNEKES":0.8,"Top Cable":0.7,"LS":0.6,
+      "Tridonic":0.45,"Eco Link":0.35,"Kopex":0.3,"Ducab Connect":0.2,"ETE":0.15,"Tylon":0.1,"Axes":0.05,"EVBox":0.05}};
+/* Traderz activity targets (MTD) */
+/* Output of additional Agentforce features (licensed in your org) */
+const AGENT={
+ sdr:{inbound:1480,worked:1240,qualified:372,converted:96,targetWorked:1400},
+ coach:{sessions:34,repsCoached:26,repsTotal:32,avgScore:78,targetScore:75},
+ eci:{callsAnalysed:1850,competitorMentions:214,talkRatio:46,priceObjections:288}};
+const ACT={callsT:2000,visitsT:350,planner:88,plannerT:95,custContacted:410,custT:450};
+
+/* Projects object — project-linked pipeline */
+const PROJ={EW:{n:46,val:650},EWA:{n:15,val:190},HYD:{n:12,val:166},TRZ:{n:4,val:30}};
+/* Incentive model — ILLUSTRATIVE TIERS, replace with your actual scheme
+   >=100% of monthly target: 1.50% of invoiced value · 85-99%: 0.75% · below 85%: nil */
+function incentiveOf(r){const att=r.t>0?r.a/r.t:0;
+ const rate=att>=1?0.015:att>=0.85?0.0075:0;
+ return r.a*rate;}
+const INC={threshold:85,rateFull:1.50,ratePartial:0.75,budgetPctGP:6.0};
+/* Sales In = Order object (orders received) · Sales Out = Invoice object (invoiced/dispatched) */
+const SALES={EW:{in:66.4,out:61.5},EWA:{in:16.3,out:15.0},HYD:{in:13.7,out:12.8},TRZ:{in:12.4,out:12.0}};
+const SALES_TREND={in:[94.6,98.5,101.9,103.6,106.6,108.8],out:[82.2,85.5,90.4,92.9,97.2,101.3]};
+/* Forecast = invoiced to date + (open pipeline expected to close this month x win rate) */
+const FCST={EW:{pipeClose:2.80},EWA:{pipeClose:0.80},HYD:{pipeClose:0.65},TRZ:{pipeClose:0.50}};
+const OPPS={EW:142,EWA:46,HYD:45,TRZ:66};
+const AR={EW:[105,5.0,1.4,5.0],EWA:[26,1.2,0.4,1.0],HYD:[19.5,0.8,0.3,0.6],TRZ:[16.5,0.7,0.2,0.4]};
+const ARA={EW:22,EWA:9,HYD:5,TRZ:4};
+const LOST={EW:{"Price did not match":18.0,"No Stock":4.7,"Order Cancelled":4.0},
+ EWA:{"Price did not match":5.1,"No Stock":1.4,"Order Cancelled":1.2},
+ HYD:{"Price did not match":2.1,"No Stock":0.8,"Order Cancelled":0.6},
+ TRZ:{"Price did not match":2.6,"No Stock":0.9,"Order Cancelled":0.7}};
+const TREND={EW:[50.5,52.2,55.2,56.5,59.1,61.5],EWA:[12.4,12.8,13.3,13.7,14.1,15.0],
+ HYD:[10.7,11.1,11.6,12.0,12.4,12.8],TRZ:[8.6,9.4,10.3,10.7,11.6,12.0]};
+const MONTHS=["Feb","Mar","Apr","May","Jun","Jul"];
+const FIN={EW:{gm:25.2,dso:58,cash:52.7,intake:66.4,qIss:1200,qAcc:520,newCust:9,dormant:420},
+ EWA:{gm:26.0,dso:55,cash:12.8,intake:16.3,qIss:400,qAcc:180,newCust:4,dormant:140},
+ HYD:{gm:27.5,dso:48,cash:10.7,intake:13.7,qIss:420,qAcc:210,newCust:4,dormant:95},
+ TRZ:{gm:24.0,dso:44,cash:10.3,intake:12.4,qIss:640,qAcc:340,newCust:6,dormant:130}};
+const OPS={EW:{cycle:42,fill:95,yoy:12.4,tat:1.8},EWA:{cycle:40,fill:96,yoy:14.2,tat:1.7},
+ HYD:{cycle:36,fill:97,yoy:11.5,tat:1.5},TRZ:{cycle:11,fill:96,yoy:18.6,tat:0.4}};
+const ERP={EW:{backlog:154,inv:90,dio:56,dpo:55,otd:96,ebitda:12.4,credit:52},
+ EWA:{backlog:42,inv:22,dio:52,dpo:50,otd:96,ebitda:12.8,credit:48},
+ HYD:{backlog:31,inv:15,dio:46,dpo:45,otd:97,ebitda:13.5,credit:40},
+ TRZ:{backlog:15,inv:14,dio:50,dpo:52,otd:97,ebitda:12.2,credit:45}};
+const DEALS=[
+ {o:"Osaipower - Khalifa Port",c:"EW",amt:61441300,cl:"6 Aug",st:"Proposal",own:"Syed Mutuza"},
+ {o:"DG Jones & Partners (ME) Ltd",c:"EW",amt:47561000,cl:"24 Aug",st:"Bidding",own:"Amin"},
+ {o:"Vertiv - Mennekes Connector",c:"EW",amt:36330000,cl:"3 Aug",st:"Proposal",own:"Priyesh Pattali"},
+ {o:"NEOM Substation Package 4",c:"EWA",amt:26200000,cl:"14 Aug",st:"Proposal",own:"Salahuddin"},
+ {o:"SPOTS MR-3863",c:"EW",amt:18430000,cl:"5 Aug",st:"Finalizing",own:"Irfan"},
+ {o:"GRP - Sharjah Garden City Ph 3A",c:"HYD",amt:15660000,cl:"1 Aug",st:"Active JIH",own:"Ashok",br:"KSB"},
+ {o:"Red Sea Global - LV Distribution",c:"EWA",amt:12760000,cl:"20 Aug",st:"Bidding",own:"Nisfan"},
+ {o:"Emirates Steel - MV Cable Lot 2",c:"EW",amt:11730000,cl:"18 Aug",st:"Transactional",own:"Sujeet Kumar"},
+ {o:"Jumeirah Golf Estates - Booster Set",c:"HYD",amt:6080000,cl:"11 Aug",st:"Submittal",own:"Ravi",br:"KSB"},
+ {o:"Al Khaleej Sugar - counter supply",c:"TRZ",amt:2055000,cl:"12 Aug",st:"Proposal",own:"Ajay Ram"},
+ {o:"Al Shola Transport - depot stock",c:"TRZ",amt:1370000,cl:"22 Aug",st:"Transactional",own:"Thauseef"}];
+const SPK={rev:[82.2,85.5,90.4,92.9,97.2,101.3],att:[102,103,105,105,106,107],gp:[21.0,21.8,23.1,23.7,24.8,25.8],
+ ebitda:[11.9,12.0,12.2,12.3,12.5,12.6],cash:[70.0,73.0,78.0,80.0,83.0,86.5],intake:[94.6,98.5,101.9,103.6,106.6,108.8],
+ cycle:[48,46,45,44,43,42],tat:[2.4,2.2,2.0,1.9,1.8,1.7],dso:[63,62,60,59,58,57],backlog:[210,218,228,232,238,242],
+ win:[50,51,52,52,53,53],gmp:[24.2,24.5,24.8,25.0,25.3,25.5],calls:[1620,1710,1680,1750,1790,1850],visits:[280,295,290,305,312,320]};
+const DLT={rev:8.9,att:1.0,pipeline:2.1,openpipe:1.8,win:1.0,ar90:-8.4,gp:8.5,ebitda:0.1,cash:14.5,intake:-5.2,
+ coverage:1.5,avgdeal:-3.1,cycle:0.0,tat:-3.4,backlog:-3.1,inventory:-1.2,ccc:-2.6,dso:-1.4,otd:0.9,fill:1.1,
+ credit:-2.0,calls:3.4,visits:2.6,planner:1.2,custcontacted:4.2,incqual:2.0,projmix:0.8,forecast:6.4,salesin:2.0,salesout:6.6,netflow:4.1,projects:3.0,incentive:5.5};
+const PER={today:{k:.05,lb:"Today"},mtd:{k:1,lb:"MTD"},qtd:{k:2.7,lb:"QTD"},ytd:{k:6.5,lb:"YTD"}};
+let S={p:"mtd",co:"all",mgr:"all",rep:"all",br:"all"};
+
+const $=i=>document.getElementById(i);
+const fM=v=>v>=1000?(v/1000).toFixed(2)+"B":(v>=100?Math.round(v)+"M":(v>=1?v.toFixed(1)+"M":Math.round(v*1000)+"K"));
+const fA=v=>"AED "+fM(v);
+const fN=v=>Math.round(v).toLocaleString("en-US");
+const pc=(a,b)=>b>0?Math.round(a/b*100):0;
+const keys=()=>S.co==="all"?Object.keys(CO):[S.co];
+const k=()=>PER[S.p].k, plb=()=>PER[S.p].lb;
+function reps(){let r=REPS.filter(x=>keys().includes(x.c));
+ if(S.mgr!=="all")r=r.filter(x=>x.mgr===S.mgr);
+ if(S.rep!=="all")r=r.filter(x=>x.n===S.rep);
+ if(S.br!=="all")r=r.filter(x=>!x.brands||x.brands.includes(S.br));
+ return r;}
+/* brand factor — Brand filters sales metrics only (AR, stock and service are not brand-attributed) */
+function brandFactor(){
+ if(S.br==="all")return 1;
+ const ks=keys();let bt=0,tt=0;
+ ks.forEach(c=>{const b=BRAND[c]||{};tt+=Object.values(b).reduce((s,v)=>s+v,0);bt+=b[S.br]||0;});
+ return tt>0?bt/tt:0;}
+function share(){const all=REPS.filter(x=>keys().includes(x.c));const sel=reps();
+ const at=all.reduce((s,x)=>s+x.t,0),st=sel.reduce((s,x)=>s+x.t,0);return at>0?st/at:0;}
+function spark(a,c,w=92,h=22){const mn=Math.min(...a),mx=Math.max(...a),rg=(mx-mn)||1;
+ const p=a.map((v,i)=>`${(i/(a.length-1)*w).toFixed(1)},${(h-2-(v-mn)/rg*(h-5)).toFixed(1)}`).join(" ");
+ const L=p.split(" ").pop().split(",");
+ return `<svg class="spark" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}"><polyline points="${p}" fill="none" stroke="${c}" stroke-width="1.6"/><circle cx="${L[0]}" cy="${L[1]}" r="2.2" fill="${c}"/></svg>`;}
+
+function agg(){
+ const R=reps(),ks=keys(),K=k(),sh=share(),bf=brandFactor();
+ const actual=R.reduce((s,x)=>s+x.a,0)*K*bf, target=R.reduce((s,x)=>s+x.t,0)*K*bf;
+ const won=Math.round(R.reduce((s,x)=>s+x.w,0)*K),lost=Math.round(R.reduce((s,x)=>s+x.l,0)*K);
+ const stg={},stgOpen={};
+ ks.forEach(c=>STAGES[c].forEach(([n,v,op])=>{stg[n]=(stg[n]||0)+v*sh;if(op)stgOpen[n]=true;}));
+ const allPipe=Object.values(stg).reduce((s,v)=>s+v,0);
+ const openPipe=Object.entries(stg).filter(([n])=>stgOpen[n]).reduce((s,[,v])=>s+v,0);
+ const ar=[0,0,0,0];ks.forEach(c=>AR[c].forEach((v,i)=>ar[i]+=v*sh));
+ const lb={};ks.forEach(c=>Object.entries(LOST[c]).forEach(([r,v])=>lb[r]=(lb[r]||0)+v*sh*K));
+ const rev=ks.map(c=>REPS.filter(x=>x.c===c).reduce((s,x)=>s+x.a,0)),tr=rev.reduce((s,v)=>s+v,0);
+ const wR=f=>ks.reduce((s,c,i)=>s+f(c)*rev[i],0)/tr;
+ const arT=ks.map(c=>AR[c].reduce((s,v)=>s+v,0)),tA=arT.reduce((s,v)=>s+v,0);
+ const wA=f=>ks.reduce((s,c,i)=>s+f(c)*arT[i],0)/tA;
+ const sum=f=>ks.reduce((s,c)=>s+f(c),0);
+ const TR=R.filter(x=>x.c==="TRZ");
+ const incTot=R.reduce((s,x)=>s+incentiveOf(x),0)*K*bf;
+ const qualifying=R.filter(x=>x.t>0&&x.a/x.t>=INC.threshold/100).length;
+ return{actual,target,won,lost,stg,stgOpen,allPipe,openPipe,opps:Math.round(sum(c=>OPPS[c])*sh),ar,
+  arAcc:Math.round(sum(c=>ARA[c])*sh),lb,lostVal:Object.values(lb).reduce((s,v)=>s+v,0),
+  gm:wR(c=>FIN[c].gm),dso:wA(c=>FIN[c].dso),cash:sum(c=>FIN[c].cash)*sh*K*bf,intake:sum(c=>FIN[c].intake)*sh*K*bf,
+  qIss:Math.round(sum(c=>FIN[c].qIss)*sh*K),qAcc:Math.round(sum(c=>FIN[c].qAcc)*sh*K),
+  newCust:Math.round(sum(c=>FIN[c].newCust)*sh*K),dormant:Math.round(sum(c=>FIN[c].dormant)*sh),
+  cycle:wR(c=>OPS[c].cycle),fill:wR(c=>OPS[c].fill),yoy:wR(c=>OPS[c].yoy),tat:wR(c=>OPS[c].tat),
+  backlog:sum(c=>ERP[c].backlog)*sh,inv:sum(c=>ERP[c].inv)*sh,dio:wR(c=>ERP[c].dio),dpo:wR(c=>ERP[c].dpo),
+  otd:wR(c=>ERP[c].otd),ebitda:wR(c=>ERP[c].ebitda),credit:wA(c=>ERP[c].credit),
+  calls:TR.reduce((s,x)=>s+(x.calls||0),0)*K,visits:TR.reduce((s,x)=>s+(x.visits||0),0)*K,
+  trzReps:TR.length,
+  projN:Math.round(sum(c=>PROJ[c].n)*sh),projVal:sum(c=>PROJ[c].val)*sh,
+  salesIn:sum(c=>SALES[c].in)*sh*K*bf,salesOut:sum(c=>SALES[c].out)*sh*K*bf,
+  pipeClose:sum(c=>FCST[c].pipeClose)*sh*bf,
+  inc:incTot,qualifying,repCount:R.length,
+  sdrWorked:Math.round(AGENT.sdr.worked*sh*K),sdrQual:Math.round(AGENT.sdr.qualified*sh*K),
+  coachReps:Math.round(AGENT.coach.repsCoached*sh),coachSessions:Math.round(AGENT.coach.sessions*sh*K),
+  eciCalls:Math.round(AGENT.eci.callsAnalysed*sh*K)};
+}
+function coAgg(c){const K=k(),R=REPS.filter(x=>x.c===c);
+ const a=R.reduce((s,x)=>s+x.a,0)*K,t=R.reduce((s,x)=>s+x.t,0)*K;
+ const w=R.reduce((s,x)=>s+x.w,0),l=R.reduce((s,x)=>s+x.l,0);
+ const op=STAGES[c].filter(([,,o])=>o).reduce((s,[,v])=>s+v,0);
+ return{a,t,att:pc(a,t),pipe:op,win:pc(w,w+l),ar90:AR[c][3]};}
+function mgrAgg(m){const K=k(),R=REPS.filter(x=>x.mgr===m);
+ const a=R.reduce((s,x)=>s+x.a,0)*K,t=R.reduce((s,x)=>s+x.t,0)*K;
+ const w=R.reduce((s,x)=>s+x.w,0),l=R.reduce((s,x)=>s+x.l,0);
+ return{a,t,att:pc(a,t),win:pc(w,w+l),ar:R.reduce((s,x)=>s+x.ar,0),n:R.length,c:R[0]?R[0].c:""};}
+const MGRS=[...new Set(REPS.filter(x=>x.mgr!=="Not mapped").map(x=>x.mgr))];
+const mgrCo=m=>{const r=REPS.find(x=>x.mgr===m);return r?r.c:"";};
+/* which companies carry a given brand - makes the Brand filter two-way dependent */
+const brandCos=b=>Object.keys(CO).filter(c=>BRAND[c]&&BRAND[c][b]!==undefined);
+
+/* ═══════════ METRIC DEFINITIONS ═══════════ */
+const MET={
+rev:{n:"Revenue",sm:"Sales Amount (Actual)",ag:"SUM",tm:"Posting Date",dm:"Company, Sales Manager, Salesperson, Brand (via Products), Customer",
+ what:"Invoiced sales value for the period, excluding VAT.",calc:"SUM([Invoiced Value])",
+ src:"Salesforce <b>Invoice</b> object — already in the org, so this arrives through Data 360 zero-copy with no ERP extract",snap:false,rel:["att","openpipe","gp"]},
+att:{n:"Target Attainment",sm:"Revenue / Target",ag:"Ratio",tm:"Posting Date",dm:"Company, Sales Manager, Salesperson",
+ what:"Revenue as a share of the period target. Published separately because a Tableau Next metric card shows a comparison, not a target bar.",
+ calc:"SUM([Invoiced Value]) / SUM([Target Amount])",src:"Salesforce <b>Invoice</b> + <b>Sales Executive Monthly Target</b>",snap:false,rel:["rev","win"]},
+openpipe:{n:"Open Pipeline",sm:"Opportunity Amount (open stages only)",ag:"SUM",tm:"Snapshot Date",dm:"Company, Stage, Sales Manager, Salesperson",
+ what:"Value of opportunities in the stages your business counts as live. This is company-specific, not a simple 'not closed' filter.",
+ calc:"// Electric Way, Electric Way Arabia and Traderz\nSUM(IF [Stage] IN ('Proposal','Finalizing')\n    THEN [Amount] END)\n\n// Hydroway (to confirm)\nSUM(IF [Stage] IN ('Data Collection','Potential / Tender',\n                   'Active JIH','Submittal') THEN [Amount] END)",
+ src:"Salesforce <b>Opportunity</b> via Data 360 zero-copy, snapshotted daily. Stage-to-open mapping held in the semantic model so every metric and Concierge answer uses the same rule.",snap:true,rel:["allpipe","coverage","win"]},
+allpipe:{n:"Total Open Opportunities",sm:"Opportunity Amount (all pre-closed)",ag:"SUM",tm:"Snapshot Date",dm:"Company, Stage",
+ what:"Everything not yet closed, including Future, Bidding, Purchase Order and Execution. Shown alongside Open Pipeline so the gap between the two is visible.",
+ calc:"SUM(IF NOT [Is Closed] THEN [Amount] END)",src:"Salesforce <b>Opportunity</b>",snap:true,rel:["openpipe","backlog"]},
+win:{n:"Win Rate",sm:"Won / Decided",ag:"Ratio",tm:"Close Date",dm:"Company, Sales Manager, Salesperson, Lost Reason",
+ what:"Share of decided opportunities won (Closed Won ÷ Closed Won + Closed Lost).",
+ calc:"COUNTD(IF [Stage]='Closed Won' THEN [Opportunity Id] END)\n/ COUNTD(IF [Stage] LIKE 'Closed%' THEN [Opportunity Id] END)",
+ src:"Salesforce <b>Opportunity</b>",snap:false,rel:["avgdeal","tat","gp"]},
+ar90:{n:"Overdue AR > 90 days",sm:"Remaining Amount (LCY)",ag:"SUM",tm:"Snapshot Date",dm:"Company, Customer, Salesperson, Bucket",
+ what:"Invoices unpaid more than 90 days past due.",
+ calc:"IF DATEDIFF('day',[Due Date],TODAY()) > 90 THEN '90+' ...\n\nSUM(IF [Bucket]='90+' THEN [Remaining Amount] END)",
+ src:"Salesforce <b>Balance</b> object (open items with due dates) — no Navision FlowField problem, since the balance is already materialised in the org",snap:true,rel:["dso","credit","cash"]},
+gp:{n:"Gross Profit",sm:"Sales − Cost Amount",ag:"SUM",tm:"Posting Date",dm:"Company, Brand (via Products), Product Group",
+ what:"Revenue minus direct cost of goods sold.",calc:"SUM([Invoiced Value]) - SUM([Cost Amount Actual])",
+ src:"Salesforce <b>Invoice</b> for the sales side. <b>Cost is not in Salesforce</b> — item cost must come from Navision, so Gross Profit depends on that connection",snap:false,rel:["ebitda","rev"]},
+ebitda:{n:"EBITDA Margin",sm:"EBITDA / Revenue",ag:"Ratio",tm:"Posting Date",dm:"Company, G/L Account Group",
+ what:"Earnings before interest, tax, depreciation and amortisation over revenue.",
+ calc:"(SUM([Gross Profit]) - SUM([Operating Expenses])) / SUM([Revenue])",
+ src:"<b>Not in Salesforce</b> — needs Navision G/L Entry plus a G/L account mapping agreed with Finance",snap:false,rel:["gp","ccc"]},
+cash:{n:"Cash Collected",sm:"Payment Amount (LCY)",ag:"SUM",tm:"Payment Posting Date",dm:"Company, Customer",
+ what:"Cash received from customers in the period.",calc:"SUM(IF [Document Type]='Payment' THEN [Amount LCY] END)",
+ src:"Salesforce <b>Balance</b> object movement, or Navision payment entries if receipts are not synced",snap:false,rel:["dso","ar90"]},
+intake:{n:"Order Intake",sm:"Sales Order Amount",ag:"SUM",tm:"Order Date",dm:"Company, Salesperson, Brand (via Products)",
+ what:"New confirmed orders booked — the leading indicator of revenue.",calc:"SUM([Sales Line Amount])  // Document Type = Order",
+ src:"Salesforce <b>Order</b> object, booked on order date",snap:false,rel:["backlog","rev"]},
+coverage:{n:"Pipeline Coverage",sm:"Open Pipeline / Remaining Target",ag:"Ratio",tm:"Snapshot Date",dm:"Company, Sales Manager",
+ what:"Times the remaining annual target is covered by Open Pipeline — using each company's own open-stage rule.",
+ calc:"SUM([Open Pipeline])\n/ (SUM([Annual Target]) - SUM([YTD Revenue]))",src:"Salesforce <b>Opportunity</b> + <b>Sales Executive Monthly Target</b>",snap:true,rel:["openpipe","win"]},
+avgdeal:{n:"Average Deal Size",sm:"Revenue / Won Deals",ag:"Ratio",tm:"Close Date",dm:"Company, Salesperson",
+ what:"Whether growth comes from bigger deals or more of them. Very different by company — Traderz books many small counter orders.",
+ calc:"SUM([Revenue]) / COUNTD(IF [Stage]='Closed Won' THEN [Opportunity Id] END)",src:"Salesforce <b>Opportunity</b>",snap:false,rel:["win","cycle"]},
+cycle:{n:"Sales Cycle",sm:"Days Created to Close",ag:"AVG",tm:"Close Date",dm:"Company, Salesperson, Stage",
+ what:"Average days from creation to close on won deals. Project companies run long; the Traderz counter runs days.",
+ calc:"AVG(DATEDIFF('day',[Created Date],[Close Date]))",src:"Salesforce <b>Opportunity</b> (created vs close date)",snap:false,rel:["tat","avgdeal"]},
+tat:{n:"Quote Turnaround",sm:"Days Enquiry to Quote",ag:"AVG",tm:"Quote Sent Date",dm:"Company, Salesperson",
+ what:"Days from enquiry to quote issued.",calc:"AVG(DATEDIFF('day',[Enquiry Date],[Quote Sent Date]))",
+ src:"Salesforce <b>Quote</b> object — depends on the enquiry date being captured on <b>Leads</b> or <b>Opportunity</b>",snap:false,rel:["win","cycle"]},
+backlog:{n:"Order Backlog",sm:"Outstanding Amount (LCY)",ag:"SUM",tm:"Snapshot Date",dm:"Company, Customer",
+ what:"Confirmed orders not yet delivered — revenue already secured.",calc:"SUM([Outstanding Amount LCY])  // Document Type = Order",
+ src:"Salesforce <b>Order</b> object — ordered value less invoiced value (<b>Invoice</b> object)",snap:true,rel:["intake","otd"]},
+inventory:{n:"Inventory Value",sm:"Cost Amount (Actual)",ag:"SUM",tm:"Snapshot Date",dm:"Company, Product, Brand (via Products), Location",
+ what:"Stock on hand at cost, with days of stock.",calc:"SUM([Cost Amount Actual])\n\n// DIO = Inventory / (COGS / days)",
+ src:"<b>Not in Salesforce</b> — <b>Products</b> holds the catalogue, not stock value. Inventory needs Navision Value Entry",snap:true,rel:["fill","ccc"]},
+ccc:{n:"Cash Conversion Cycle",sm:"DSO + DIO − DPO",ag:"Derived",tm:"Snapshot Date",dm:"Company",
+ what:"Days between paying suppliers and collecting from customers.",calc:"[DSO] + [DIO] - [DPO]",
+ src:"DSO from Salesforce <b>Balance</b>; inventory days and payable days <b>not in Salesforce</b> — need Navision",snap:true,rel:["dso","inventory"]},
+dso:{n:"DSO",sm:"AR / Revenue × Days",ag:"Ratio",tm:"Snapshot Date",dm:"Company, Customer, Salesperson",
+ what:"Average days customers take to pay.",calc:"(SUM([Accounts Receivable]) / SUM([Revenue])) * [Days in Period]",
+ src:"Salesforce <b>Balance</b> object + invoiced revenue from <b>Invoice</b>",snap:true,rel:["ar90","cash","ccc"]},
+otd:{n:"On-Time Delivery",sm:"On-Time Lines / Total Lines",ag:"Ratio",tm:"Shipment Posting Date",dm:"Company, Customer, Item",
+ what:"Order lines delivered on or before the promised date.",
+ calc:"COUNT(IF [Actual Delivery Date] <= [Promised Delivery Date]\n     THEN [Shipment Line Id] END) / COUNT([Shipment Line Id])",
+ src:"<b>Not in Salesforce</b> — needs Navision shipment lines with promised vs actual delivery dates",snap:false,rel:["fill","backlog"]},
+fill:{n:"Stock Fill Rate",sm:"Complete Lines / Total Lines",ag:"Ratio",tm:"Shipment Posting Date",dm:"Company, Item, Brand",
+ what:"Lines fulfilled from stock first time. Critical for the Traderz counter and for cable cut lengths.",
+ calc:"COUNT(IF [Qty Shipped First Pass] >= [Qty Ordered]\n     THEN [Order Line Id] END) / COUNT([Order Line Id])",
+ src:"Partly available — <b>Order</b> vs <b>Invoice</b> quantities give a proxy; true first-pass fill needs Navision shipment lines",snap:false,rel:["inventory","otd"]},
+credit:{n:"Credit Utilisation",sm:"Balance / Credit Limit",ag:"Ratio",tm:"Snapshot Date",dm:"Company, Customer",
+ what:"Share of approved customer credit limits drawn.",calc:"SUM([Outstanding Balance]) / SUM([Credit Limit LCY])",
+ src:"Salesforce <b>Accounts</b> (credit limit, if maintained) + <b>Balance</b> object",snap:true,rel:["ar90","dso"]},
+custcontacted:{n:"Customers Contacted",sm:"Distinct Accounts Contacted",ag:"COUNTD",tm:"Activity Date",dm:"Salesperson, Customer, Area",
+ what:"Unique customers the Traderz counter actually spoke to or visited in the period. Calls measure effort; this measures reach.",
+ calc:"COUNTD([Account Id])   // activities logged in the period",
+ src:"Salesforce Activity records on <b>Account</b> / <b>Contact</b>",snap:false,rel:["calls","visits","planner"]},
+incqual:{n:"Incentive Qualification",sm:"Qualifying Reps / Total Reps",ag:"Ratio",tm:"Target Month",dm:"Company, Sales Manager",
+ what:"Share of the sales team at or above the incentive threshold. A very high number may mean targets are set too softly; a very low one means the scheme is not motivating anyone.",
+ calc:"COUNTD(IF [Attainment] >= 0.85 THEN [User Id] END)\n/ COUNTD([User Id])",
+ src:"Salesforce <b>Sales Executive Monthly Target</b> + incentive model",snap:false,rel:["incentive","att"]},
+projmix:{n:"Project Mix",sm:"Project Pipeline / Open Pipeline",ag:"Ratio",tm:"Snapshot Date",dm:"Company",
+ what:"How much of the open pipeline is project-linked rather than transactional. The two need different coverage and cycle assumptions.",
+ calc:"SUM([Project Linked Amount]) / SUM([Open Pipeline])",
+ src:"Salesforce <b>Project</b> object joined to <b>Opportunity</b>",snap:true,rel:["projects","openpipe","cycle"]},
+forecast:{n:"Month-End Forecast",sm:"Invoiced + Weighted Pipeline",ag:"Calculated",tm:"Forecast Month",dm:"Company, Sales Manager, Salesperson",
+ what:"Where the month is expected to land: value already invoiced plus open pipeline realistically closing before month end, weighted by win rate.",
+ calc:"// Calculated field, not a statistical forecast\nSUM([Invoiced Value])\n+ SUM(IF [Expected Close Date] <= [Month End]\n      AND [Stage] IN ('Proposal','Finalizing')\n      THEN [Amount] * [Win Rate] END)\n\n// Run-rate alternative\nSUM([Invoiced Value]) / [Working Days Elapsed] * [Working Days In Month]",
+ src:"Salesforce <b>Invoice</b> + <b>Opportunity</b>. Note: Tableau Next has no built-in predictive forecasting, so this is deliberately a calculated field the CEO can audit.",snap:false,rel:["salesin","salesout","att"]},
+salesin:{n:"Sales In",sm:"Order Value",ag:"SUM",tm:"Order Date",dm:"Company, Salesperson, Brand (via Products), Customer",
+ what:"Orders received in the period — what the business booked. Compared against Sales Out it shows whether backlog is building or draining.",
+ calc:"SUM([Order Value])   // Order object, excl. VAT",
+ src:"Salesforce <b>Order</b> object",snap:false,rel:["salesout","netflow","backlog"]},
+salesout:{n:"Sales Out",sm:"Invoiced Value",ag:"SUM",tm:"Invoice Date",dm:"Company, Salesperson, Brand (via Products), Customer, Product",
+ what:"Goods invoiced and dispatched in the period — the revenue that actually left the warehouse.",
+ calc:"SUM([Invoice Amount])   // Invoice object, excl. VAT",
+ src:"Salesforce <b>Invoice</b> object",snap:false,rel:["salesin","rev","forecast"]},
+netflow:{n:"Net In / Out",sm:"Sales In − Sales Out",ag:"Derived",tm:"Period",dm:"Company, Brand (via Products)",
+ what:"Orders received less orders invoiced. Positive means the order book is growing faster than you can ship — the healthiest signal in a distribution business.",
+ calc:"SUM([Sales In]) - SUM([Sales Out])",
+ src:"Salesforce <b>Order</b> and <b>Invoice</b> objects",snap:false,rel:["salesin","salesout","backlog"]},
+projects:{n:"Active Projects",sm:"Project Count / Value",ag:"COUNTD + SUM",tm:"Project Start Date",dm:"Company, Salesperson, Customer, Project Stage",
+ what:"Projects currently live and the opportunity value linked to them. Separates project business from transactional counter business — the two behave nothing alike.",
+ calc:"COUNTD([Project Id])          // active projects\nSUM([Linked Opportunity Amount]) // project pipeline",
+ src:"Salesforce <b>Projects</b> object, related to Opportunity and Account",snap:true,rel:["openpipe","avgdeal","cycle"]},
+incentive:{n:"Incentive Payout",sm:"Incentive Earned",ag:"SUM",tm:"Target Month",dm:"Company, Sales Manager, Salesperson, Tier",
+ what:"Incentive earned by the sales team for the period, and what it costs as a share of gross profit. Lets the CEO see whether the scheme is paying out for the right performance.",
+ calc:"// tiered on monthly target attainment\nIF [Attainment] >= 1.00 THEN [Invoiced Value] * 0.015\nELSEIF [Attainment] >= 0.85 THEN [Invoiced Value] * 0.0075\nELSE 0 END\n\n// cost ratio\nSUM([Incentive Earned]) / SUM([Gross Profit])",
+ src:"Salesforce <b>incentive model</b> + <b>Sales Executive Monthly Target</b>, joined to invoiced value",snap:false,rel:["att","gp","rev"]},
+calls:{n:"Customer Calls",sm:"Call Activity Count",ag:"COUNT",tm:"Activity Date",dm:"Salesperson, Customer, Call Outcome",
+ what:"Daily customer calls logged by the Traderz trading counter — the core activity driver of that business.",
+ calc:"COUNT(IF [Activity Type]='Call' THEN [Activity Id] END)",
+ src:"Salesforce Activity records against <b>Accounts</b> / <b>Contacts</b> for the Traderz book",snap:false,rel:["visits","planner","rev"]},
+visits:{n:"Customer Visits",sm:"Visit Activity Count",ag:"COUNT",tm:"Activity Date",dm:"Salesperson, Customer, Area",
+ what:"Customer visits completed by the Traderz team.",calc:"COUNT(IF [Activity Type]='Visit' THEN [Activity Id] END)",
+ src:"Salesforce Activity / Event records on <b>Accounts</b>",snap:false,rel:["calls","planner"]},
+planner:{n:"Customer Planner Adherence",sm:"Completed / Planned Contacts",ag:"Ratio",tm:"Planned Date",dm:"Salesperson, Customer",
+ what:"Share of the customer planner actually executed — did the team contact who they said they would?",
+ calc:"COUNT([Completed Contacts]) / COUNT([Planned Contacts])",
+ src:"Salesforce customer planner records (Traderz) on <b>Accounts</b> / <b>Contacts</b>",snap:false,rel:["calls","visits"]}};
+let MV={};
+
+/* ═══════════ RENDER ═══════════ */
+function render(){
+ const A=agg();
+ const att=pc(A.actual,A.target);
+ const win=A.won+A.lost>0?A.won/(A.won+A.lost)*100:0;
+ const arTot=A.ar.reduce((s,v)=>s+v,0);
+ const ar90s=arTot>0?A.ar[3]/arTot*100:0;
+ const coll=A.actual>0?A.cash/A.actual*100:0;
+ const b2b=A.actual>0?A.intake/A.actual:0;
+ const R0=reps();
+ const remain=Math.max(R0.reduce((s,x)=>s+x.t,0)*12-R0.reduce((s,x)=>s+x.a,0)*6.5,.01);
+ const cov=A.openPipe/remain;
+ const avg=A.won>0?A.actual/A.won:0;
+ const mtd=R0.reduce((s,x)=>s+x.a,0);
+ const blc=mtd>0?A.backlog/mtd:0;
+ const ccc=A.dso+A.dio-A.dpo;
+ const gp=A.actual*A.gm/100;
+ const cf=(ok,warn)=>ok?"g":warn?"a":"r";
+
+ /* ── CASCADING FILTER WIDGETS ──
+    Company narrows Managers, Salespeople and Brands. Manager narrows Salespeople to their team. */
+ $("coSel").value=S.co;
+ const mgrSet=MGRS.filter(m=>keys().includes(mgrCo(m)));
+ const hasUnmapped=REPS.some(x=>keys().includes(x.c)&&x.mgr==="Not mapped");
+ $("mgrSel").innerHTML=`<option value="all">All Managers${S.co==="all"?"":" — "+CO[S.co].short}</option>`
+  +mgrSet.map(m=>`<option value="${m}">${m} · ${CO[mgrCo(m)].short}</option>`).join("")
+  +(hasUnmapped?`<option value="Not mapped">Not mapped</option>`:"");
+ if(S.mgr!=="all"&&S.mgr!=="Not mapped"&&!mgrSet.includes(S.mgr))S.mgr="all";
+ if(S.mgr==="Not mapped"&&!hasUnmapped)S.mgr="all";
+ $("mgrSel").value=S.mgr;
+
+ let repSet=REPS.filter(x=>keys().includes(x.c));
+ if(S.mgr!=="all")repSet=repSet.filter(x=>x.mgr===S.mgr);
+ if(S.br!=="all")repSet=repSet.filter(x=>!x.brands||x.brands.includes(S.br));
+ $("repSel").innerHTML=`<option value="all">All Salespeople${S.mgr!=="all"&&S.mgr!=="Not mapped"?" — "+S.mgr+"'s team":(S.co==="all"?"":" — "+CO[S.co].short)}</option>`
+  +repSet.map(r=>`<option value="${r.n}">${r.n}${r.t===0?" (manager)":""} · ${CO[r.c].short}</option>`).join("");
+ if(S.rep!=="all"&&!repSet.some(r=>r.n===S.rep))S.rep="all";
+ $("repSel").value=S.rep;
+
+ const brSet=[...new Set(keys().flatMap(c=>Object.keys(BRAND[c]||{})))].sort();
+ $("brSel").innerHTML=`<option value="all">All Brands${S.co==="all"?"":" — "+CO[S.co].short}</option>`
+  +brSet.map(b=>{const cs=brandCos(b);
+    return `<option value="${b}">${b}${S.co==="all"&&cs.length===1?" \u00b7 "+CO[cs[0]].short:""}</option>`;}).join("");
+ if(S.br!=="all"&&!brSet.includes(S.br))S.br="all";
+ $("brSel").value=S.br;
+
+ const scope=(S.co==="all"?"All four companies":CO[S.co].name+" — "+CO[S.co].loc)
+  +(S.mgr!=="all"&&S.mgr!=="Not mapped"?" · "+S.mgr+"'s team":"")
+  +(S.rep!=="all"?" · "+S.rep:"")+(S.br!=="all"?" · "+S.br:"");
+ $("scopeLbl").innerHTML="<b>Viewing:</b> "+scope+" · "+plb();
+
+ $("orgNote").innerHTML=S.co==="all"
+  ? `<b>EW Group — four operating companies.</b>
+     <b>Electric Way</b> (Dubai) and <b>Electric Way Arabia</b> (Saudi Arabia) sell and distribute electrical cable, wire and accessories, and share one opportunity model where <b>Open Opportunity counts only Proposal and Finalizing</b>.
+     <b>Hydroway</b> (Deira) sells pumps and motors for KSB, CALPAK, DOORI and DAB, and runs a different stage model (Data Collection → Potential/Tender → Active JIH → Submittal → Purchase Order → Execution).
+     <b>Traderz</b> (Deira) is a trading counter measured on customer calls, visits and planner adherence as much as on revenue.
+     Because the stage models differ, Open Pipeline is defined per company in the semantic model rather than as a single "not closed" filter.
+     <br><br><b>All four companies are above plan this period.</b> Ranked on target attainment: Traderz leads, then Electric Way, Electric Way Arabia and Hydroway — every one at or above 100%, with group revenue ${fA(agg().actual)} against ${fA(agg().target)}.`
+  : `<b>${CO[S.co].name} — ${CO[S.co].loc}.</b> ${CO[S.co].biz}. <br><b>Stage rule:</b> ${STAGE_RULE[S.co]}`;
+
+ function card(id,val,sub,r,sp){
+  const m=MET[id],d=DLT[id];
+  const cmp=d===undefined?"":(d>0?`<span class="up">▲ ${d.toFixed(1)}%</span>`:d<0?`<span class="down">▼ ${Math.abs(d).toFixed(1)}%</span>`:`<span class="flat">— 0.0%</span>`)+" vs prior period";
+  return `<div class="m" onclick="openMetric('${id}')">
+   <div class="mn">${m.n}${m.snap?'<span class="snap">SNAPSHOT</span>':''}</div>
+   <div class="mv ${r?"cf-"+r:""}">${val}</div>
+   <div class="mc">${cmp}</div><div class="mc mfill" style="color:var(--tx2)">${sub||""}</div>
+   ${sp||'<svg class="spark" width="92" height="22" aria-hidden="true"></svg>'}</div>`;
+ }
+ MV={};const put=(i,v,t,r)=>MV[i]={v,t,r};
+ put("rev",fA(A.actual),"Target "+fA(A.target),cf(att>=100,att>=85));
+ put("att",att+"%","Target 100%",cf(att>=100,att>=85));
+ put("openpipe",fA(A.openPipe),A.opps+" open opportunities",null);
+ put("allpipe",fA(A.allPipe),"incl. Future, Bidding, PO, Execution",null);
+ put("win",win.toFixed(1)+"%","Target 45%",cf(win>=45,win>=30));
+ put("ar90",fA(A.ar[3]),ar90s.toFixed(1)+"% of book · ceiling 5%",cf(ar90s<5,ar90s<8));
+ put("gp",fA(gp),"Margin "+A.gm.toFixed(1)+"% · target 25%",cf(A.gm>=25,A.gm>=20));
+ put("ebitda",A.ebitda.toFixed(1)+"%","Target 12%",cf(A.ebitda>=12,A.ebitda>=8));
+ put("cash",fA(A.cash),"Collection "+Math.round(coll)+"% · target 80%",cf(coll>=80,coll>=70));
+ put("intake",fA(A.intake),"Book-to-bill "+b2b.toFixed(2)+"×",cf(b2b>=1,b2b>=.9));
+ put("coverage",cov.toFixed(1)+"×","Target ≥ 3.0×",cf(cov>=3,cov>=2));
+ put("avgdeal",fA(avg),A.won+" deals won",cf(avg>=.5,avg>=.3));
+ put("cycle",Math.round(A.cycle)+" days","Goal ≤ 45 days",cf(A.cycle<=45,A.cycle<=55));
+ put("tat",A.tat.toFixed(1)+" days","Goal ≤ 2 days",cf(A.tat<=2,A.tat<=4));
+ put("backlog",fA(A.backlog),blc.toFixed(1)+" months of cover",cf(blc>=2,blc>=1.5));
+ put("inventory",fA(A.inv),Math.round(A.dio)+" days of stock",cf(A.dio<=60,A.dio<=80));
+ put("ccc",Math.round(ccc)+" days","Goal ≤ 70 days",cf(ccc<=70,ccc<=90));
+ put("dso",Math.round(A.dso)+" days","Terms 60 days",cf(A.dso<=60,A.dso<=75));
+ put("otd",A.otd.toFixed(0)+"%","Target ≥ 95%",cf(A.otd>=95,A.otd>=90));
+ put("fill",A.fill.toFixed(0)+"%","Target ≥ 95%",cf(A.fill>=95,A.fill>=90));
+ put("credit",Math.round(A.credit)+"%","Ceiling 70%",cf(A.credit<=60,A.credit<=70));
+ const callsT=ACT.callsT*k(),visitsT=ACT.visitsT*k();
+ put("calls",fN(A.calls),"Target "+fN(callsT),cf(A.calls>=callsT,A.calls>=callsT*.9));
+ put("visits",fN(A.visits),"Target "+fN(visitsT),cf(A.visits>=visitsT,A.visits>=visitsT*.9));
+ put("planner",ACT.planner+"%","Target "+ACT.plannerT+"%",cf(ACT.planner>=ACT.plannerT,ACT.planner>=85));
+ put("custcontacted",fN(ACT.custContacted*k()),"Target "+fN(ACT.custT*k()),cf(ACT.custContacted>=ACT.custT,ACT.custContacted>=ACT.custT*0.9));
+
+ $("r1").innerHTML=
+  card("rev",fA(A.actual),"Target "+fA(A.target),cf(att>=100,att>=85),spark(SPK.rev,"#0176D3"))+
+  card("att",att+"%","Revenue vs target",cf(att>=100,att>=85),spark(SPK.att,"#0176D3"))+
+  card("openpipe",fA(A.openPipe),"Company-specific open stages",null,"")+
+  card("win",win.toFixed(1)+"%",A.won+" won / "+A.lost+" lost",cf(win>=45,win>=30),spark(SPK.win,"#2E844A"));
+ $("r3").innerHTML=
+  card("coverage",cov.toFixed(1)+"×",fA(remain)+" left to target",cf(cov>=3,cov>=2),"")+
+  card("avgdeal",fA(avg),A.won+" deals won",cf(avg>=.5,avg>=.3),"")+
+  card("cycle",Math.round(A.cycle)+" d","Goal ≤ 45 days",cf(A.cycle<=45,A.cycle<=55),spark(SPK.cycle,"#D83A00"))+
+  card("tat",A.tat.toFixed(1)+" d","Goal ≤ 2 days",cf(A.tat<=2,A.tat<=4),spark(SPK.tat,"#D83A00"));
+ $("r4").innerHTML=
+  card("ar90",fA(A.ar[3]),ar90s.toFixed(1)+"% of book · "+A.arAcc+" accounts",cf(ar90s<5,ar90s<8),"")+
+  card("dso",Math.round(A.dso)+" d","Terms 60 days",cf(A.dso<=60,A.dso<=75),spark(SPK.dso,"#BA0517"))+
+  card("fill",A.fill.toFixed(0)+"%","Target ≥ 95%",cf(A.fill>=95,A.fill>=90),"")+
+  card("otd",A.otd.toFixed(0)+"%","Target ≥ 95%",cf(A.otd>=95,A.otd>=90),"");
+ $("r5").innerHTML=A.trzReps>0
+  ? card("calls",fN(A.calls),"Target "+fN(callsT)+" · "+A.trzReps+" people",cf(A.calls>=callsT,A.calls>=callsT*.9),spark(SPK.calls,"#D83A00"))+
+    card("visits",fN(A.visits),"Target "+fN(visitsT),cf(A.visits>=visitsT,A.visits>=visitsT*.9),spark(SPK.visits,"#D83A00"))+
+    card("planner",ACT.planner+"%","Target "+ACT.plannerT+"% of planned contacts",cf(ACT.planner>=ACT.plannerT,ACT.planner>=85),"")+
+    card("custcontacted",fN(ACT.custContacted*k()),"Target "+fN(ACT.custT*k())+" unique accounts",cf(ACT.custContacted>=ACT.custT,ACT.custContacted>=ACT.custT*0.9),"")
+  : `<div class="txt" style="grid-column:1/-1;margin:0">Traderz activity metrics — calls, visits and planner adherence — apply to the Traderz trading counter. Clear the company filter or select Traderz to see them.</div>`;
+
+ /* ── forecasting, sales in / sales out ── */
+ const wdEl=18,wdTot=22;
+ const runRate=A.salesOut/wdEl*wdTot;
+ const fcast=A.salesOut+A.pipeClose;
+ const fcAtt=pc(fcast,A.target);
+ const netInOut=A.salesIn-A.salesOut;
+ put("salesin",fA(A.salesIn),"Orders received",cf(A.salesIn>=A.salesOut,A.salesIn>=A.salesOut*0.95));
+ put("salesout",fA(A.salesOut),"Invoiced / dispatched",cf(att>=100,att>=85));
+ put("forecast",fA(fcast),"Target "+fA(A.target)+" ("+fcAtt+"%)",cf(fcAtt>=100,fcAtt>=90));
+ put("netflow",fA(netInOut),"Sales In less Sales Out",cf(netInOut>0,netInOut>=0));
+ $("r7").innerHTML=
+  card("forecast",fA(fcast),fcAtt+"% of target · day "+wdEl+" of "+wdTot,cf(fcAtt>=100,fcAtt>=90),"")+
+  card("salesin",fA(A.salesIn),"Order object · book-to-bill "+(A.salesIn/A.salesOut).toFixed(2)+"×",cf(A.salesIn>=A.salesOut,A.salesIn>=A.salesOut*0.95),spark(SALES_TREND.in,"#0176D3"))+
+  card("salesout",fA(A.salesOut),"Invoice object · "+att+"% of target",cf(att>=100,att>=85),spark(SALES_TREND.out,"#2E844A"))+
+  card("netflow",fA(netInOut),"Backlog "+(netInOut>0?"growing":"shrinking")+" · run rate "+fA(runRate),cf(netInOut>0,netInOut>=0),"");
+
+ /* Sales In vs Out line viz */
+ const smax=Math.max(...SALES_TREND.in)*1.15;
+ const pts=(arr)=>arr.map((v,i)=>`${28+i*96},${(150-v/smax*120).toFixed(1)}`).join(" ");
+ let sio=`<polyline points="${pts(SALES_TREND.in)}" fill="none" stroke="#0176D3" stroke-width="2.5"/>
+  <polyline points="${pts(SALES_TREND.out)}" fill="none" stroke="#2E844A" stroke-width="2.5"/>`;
+ SALES_TREND.in.forEach((v,i)=>{const x=28+i*96;
+  sio+=`<circle cx="${x}" cy="${(150-v/smax*120).toFixed(1)}" r="3" fill="#0176D3"/>`;
+  sio+=`<circle cx="${x}" cy="${(150-SALES_TREND.out[i]/smax*120).toFixed(1)}" r="3" fill="#2E844A"/>`;
+  sio+=`<text x="${x}" y="164" font-size="10" fill="#747474" text-anchor="middle">${MONTHS[i]}</text>`;});
+ sio+=`<text x="${28+5*96}" y="${(150-SALES_TREND.in[5]/smax*120-8).toFixed(1)}" font-size="10.5" fill="#0176D3" text-anchor="middle" font-weight="700">${SALES_TREND.in[5]}</text>`;
+ sio+=`<text x="${28+5*96}" y="${(150-SALES_TREND.out[5]/smax*120+16).toFixed(1)}" font-size="10.5" fill="#2E844A" text-anchor="middle" font-weight="700">${SALES_TREND.out[5]}</text>`;
+ sio+=`<line x1="20" y1="150" x2="548" y2="150" stroke="#C9C9C9"/>`;
+ $("sioSvg").innerHTML=sio;
+ $("sioNote").innerHTML=`Sales In ${fA(A.salesIn)} against Sales Out ${fA(A.salesOut)} — a net <b>+${fM(netInOut)}</b> into backlog. Sales In comes from the <b>Order</b> object, Sales Out from <b>Invoice</b>.`;
+
+ /* forecast by company */
+ $("fcSub").textContent="· day "+wdEl+" of "+wdTot+" working days";
+ const fcRows=keys().map(c=>{const R2=REPS.filter(x=>x.c===c&&(S.mgr==="all"||x.mgr===S.mgr)&&(S.rep==="all"||x.n===S.rep));
+  const out=R2.reduce((s,x)=>s+x.a,0)*k(),t=R2.reduce((s,x)=>s+x.t,0)*k();
+  const f=out+FCST[c].pipeClose*k();return{c,f,t,att:pc(f,t)};}).filter(r=>r.t>0);
+ const fmx=Math.max(...fcRows.map(r=>Math.max(r.f,r.t)),0.01);
+ $("fcViz").innerHTML=fcRows.map(r=>`<div class="hb" onclick="openMetric('forecast')"><span class="lb">${CO[r.c].name}</span>
+   <span class="tr"><i style="width:${r.f/fmx*100}%;background:${r.att>=100?"#2E844A":r.att>=90?"#A86403":"#BA0517"}"></i>
+   <span style="position:absolute;top:0;height:100%;left:${Math.min(r.t/fmx*100,99)}%;width:2px;background:#444"></span></span>
+   <b class="vl">${r.att}%</b></div>`).join("")
+  +`<div class="note">Bar = forecast, dark tick = target. Forecast is a <b>calculated</b> figure (invoiced to date + open pipeline expected to close × win rate), not a statistical model — Tableau Next does not expose Tableau Desktop's forecasting engine.</div>`;
+
+ /* projects + incentive cards */
+ const incPctGP=gp>0?A.inc/gp*100:0;
+ const qualPct=A.repCount>0?A.qualifying/A.repCount*100:0;
+ put("projects",fN(A.projN)+" live",fA(A.projVal)+" linked pipeline",null);
+ put("incentive",fA(A.inc),incPctGP.toFixed(1)+"% of gross profit",cf(incPctGP<=INC.budgetPctGP,incPctGP<=INC.budgetPctGP*1.2));
+ put("incqual",A.qualifying+" of "+A.repCount,Math.round(qualPct)+"% above threshold",cf(qualPct>=60&&qualPct<=90,qualPct>=40));
+ put("projmix",Math.round(A.projVal/Math.max(A.openPipe,1)*100)+"%","of Open Pipeline",null);
+ $("r6").innerHTML=
+  card("projects",fN(A.projN),fA(A.projVal)+" of pipeline is project-linked",null,"")+
+  card("incentive",fA(A.inc),incPctGP.toFixed(1)+"% of gross profit · budget "+INC.budgetPctGP+"%",cf(incPctGP<=INC.budgetPctGP,incPctGP<=INC.budgetPctGP*1.2),"")+
+  card("incqual",A.qualifying+" of "+A.repCount,Math.round(qualPct)+"% at or above the "+INC.threshold+"% threshold",cf(qualPct>=60&&qualPct<=90,qualPct>=40),"")+
+  card("projmix",Math.round(A.projVal/Math.max(A.openPipe,1)*100)+"%",fA(A.projVal)+" of "+fA(A.openPipe)+" is project-linked",null,"");
+
+ /* trend */
+ const ks=keys();
+ $("lgd").innerHTML=ks.map(c=>`<span><i style="background:${CO[c].hex}"></i>${CO[c].name}</span>`).join("");
+ const tot=MONTHS.map((_,i)=>ks.reduce((s,c)=>s+TREND[c][i],0)),mx=Math.max(...tot)*1.18;
+ let sv="";
+ MONTHS.forEach((m,i)=>{const x=28+i*88;let y=158;
+  ks.slice().reverse().forEach(c=>{const h=TREND[c][i]/mx*128;y-=h;
+   sv+=`<rect x="${x}" y="${y}" width="52" height="${h}" fill="${CO[c].hex}"/>`;});
+  sv+=`<text x="${x+26}" y="${y-6}" font-size="10.5" fill="#444" text-anchor="middle" font-weight="600">${tot[i].toFixed(1)}</text>`;
+  sv+=`<text x="${x+26}" y="172" font-size="10" fill="#747474" text-anchor="middle">${m}</text>`;});
+ sv+=`<line x1="20" y1="158" x2="548" y2="158" stroke="#C9C9C9"/>`;
+ $("trend").innerHTML=sv;
+
+ /* stage viz — open stages highlighted, others greyed */
+ $("stgSub").textContent=S.co==="all"?"· all stage models combined, AED M":"· "+CO[S.co].name+", AED M";
+ const se=Object.entries(A.stg).sort((a,b)=>b[1]-a[1]),sm=se[0]?se[0][1]:1;
+ $("stage").innerHTML=se.map(([n,v])=>{const op=A.stgOpen[n];
+  return `<div class="hb" onclick="openMetric('openpipe')"><span class="lb" style="${op?"":"color:var(--tx3)"}">${n}</span><span class="tr"><i style="width:${v/sm*100}%;background:${op?"#0176D3":"#C9C9C9"}"></i></span><b class="vl" style="${op?"":"color:var(--tx3)"}">${fM(v)}</b></div>`;}).join("")
+  +`<div class="note"><span style="color:#0176D3">■</span> counts toward Open Pipeline (${fA(A.openPipe)}) &nbsp; <span style="color:#C9C9C9">■</span> excluded · total not closed ${fA(A.allPipe)}<br>${S.co==="all"?"Each company applies its own open-stage rule.":STAGE_RULE[S.co]}</div>`;
+
+ /* brand viz */
+ const bAgg={};keys().forEach(c=>Object.entries(BRAND[c]||{}).forEach(([b,v])=>bAgg[b]=(bAgg[b]||0)+v*k()));
+ const be=Object.entries(bAgg).sort((a,b)=>b[1]-a[1]),bm=be[0]?be[0][1]:1;
+ $("brSub").textContent="· "+plb()+", AED M";
+ const beTop=be.slice(0,8),beRest=be.slice(8);
+ const restSum=beRest.reduce((s,[,v])=>s+v,0);
+ const beShow=restSum>0?beTop.concat([["Other "+beRest.length+" brands",restSum]]):beTop;
+ $("brandViz").innerHTML=beShow.map(([b,v])=>`<div class="hb" onclick="openMetric('rev')"><span class="lb" style="${S.br!=="all"&&S.br!==b?"color:var(--tx3)":""}">${b}</span><span class="tr"><i style="width:${v/bm*100}%;background:${S.br!=="all"&&S.br!==b?"#C9C9C9":"#9050E9"}"></i></span><b class="vl">${fM(v)}</b></div>`).join("")
+  +`<div class="note">${restSum>0?"Top 8 brands shown; the remainder is grouped. ":""}<b>Brand comes from the Products object</b> — the semantic model joins Invoice / Order line items to Products, then groups by the Brand field. Brands are company-specific: DAB, DOORI, KSB and CALPAK belong to Hydroway only, so choosing one scopes the whole page to Hydroway. Traderz carries the Electric Way portfolio. Hydroway coverage is also assigned per salesperson. The Brand filter applies to sales metrics only; receivables, stock and service are not brand-attributed.</div>`;
+
+ /* loss + AR */
+ $("lsub").textContent="· "+plb()+", AED M";
+ const le=Object.entries(A.lb).sort((a,b)=>b[1]-a[1]),lm=le[0]?le[0][1]:1;
+ const lc={"Price did not match":"#BA0517","No Stock":"#D83A00","Order Cancelled":"#A86403"};
+ $("loss").innerHTML=le.map(([n,v])=>`<div class="hb" onclick="openMetric('win')"><span class="lb">${n}</span><span class="tr"><i style="width:${v/lm*100}%;background:${lc[n]}"></i></span><b class="vl">${fM(v)}</b></div>`).join("")
+  +`<div class="note">Total lost ${fA(A.lostVal)} · ${A.lost} lost, ${A.won} won</div>`;
+ const am=Math.max(...A.ar),al=["0–30 d","31–60 d","61–90 d","90+ d"],ac=["#2E844A","#A86403","#D83A00","#BA0517"];
+ $("ar").innerHTML=A.ar.map((v,i)=>`<div class="hb" onclick="openMetric('ar90')"><span class="lb">${al[i]}</span><span class="tr"><i style="width:${v/am*100}%;background:${ac[i]}"></i></span><b class="vl">${fM(v)}</b></div>`).join("")
+  +`<div class="note">Total ${fA(arTot)} · aged from due date</div>`;
+
+ /* benchmark */
+ const cell=(v,g,b,hi,f)=>{const ok=hi?v>=g:v<=g,poor=hi?v<b:v>b;return `<td class="r ${ok?"cg":poor?"cr":"ca"}">${f(v)}</td>`;};
+ const focus={EW:"Cable &amp; wire",EWA:"Cable &amp; wire (KSA)",HYD:"Pumps &amp; motors",TRZ:"Trading counter"};
+ $("bench").innerHTML=Object.keys(CO).map(c=>{const d=coAgg(c);
+  return `<tr class="click ${S.co===c?"sel":""}" onclick="togCo('${c}')">
+   <td><span class="chip" style="background:${CO[c].hex}22;color:${CO[c].hex}">${CO[c].short}</span> <b>${CO[c].name}</b><div style="font-size:10.5px;color:var(--tx3)">${CO[c].loc}</div></td>
+   <td style="font-size:11.5px;color:var(--tx3)">${focus[c]}</td>
+   ${cell(d.att,100,85,true,v=>v+"%")}${cell(d.win,40,30,true,v=>v+"%")}${cell(FIN[c].gm,25,20,true,v=>v.toFixed(1)+"%")}
+   ${cell(ERP[c].ebitda,12,8,true,v=>v.toFixed(1)+"%")}${cell(FIN[c].dso,60,75,false,v=>v+" d")}
+   ${cell(OPS[c].fill,95,90,true,v=>v+"%")}${cell(ERP[c].otd,95,90,true,v=>v+"%")}${cell(AR[c][3],2,5,false,v=>fM(v))}
+   ${cell(OPS[c].yoy,8,0,true,v=>(v>=0?"+":"")+v.toFixed(1)+"%")}</tr>`;}).join("");
+
+ /* manager table */
+ $("mgrTbl").innerHTML=MGRS.map(m=>{const d=mgrAgg(m);
+  return `<tr class="click ${S.mgr===m?"sel":""}" onclick="togMgr('${m}')">
+   <td><b>${m}</b></td><td><span class="chip" style="background:${CO[d.c].hex}22;color:${CO[d.c].hex}">${CO[d.c].short}</span></td>
+   <td class="r">${d.n} (incl. self)</td><td class="r"><b>${fM(d.a)}</b></td><td class="r">${fM(d.t)}</td>
+   <td class="r ${d.att>=100?"cg":d.att>=85?"ca":"cr"}">${d.att}%</td>
+   <td class="r ${d.win>=40?"cg":d.win>=30?"ca":"cr"}">${d.win}%</td>
+   <td class="r ${d.ar>5?"cr":""}">${fM(d.ar)}</td></tr>`;}).join("")
+  +`<tr><td colspan="8" style="font-size:11px;color:var(--tx3)">Reporting lines were provided for Electric Way only. Managers for Electric Way Arabia, Hydroway and Traderz are not yet mapped — send them across and this table will cover all four companies.</td></tr>`;
+
+ /* leaderboard */
+ const LR=reps().filter(x=>x.t>0).slice().sort((a,b)=>b.a-a.a);
+ $("lb").innerHTML=LR.map((x,i)=>{const a=x.a*k(),t=x.t*k(),at=pc(a,t);
+  return `<tr class="click ${S.rep===x.n?"sel":""}" onclick="togRep('${x.n}')">
+   <td>${i+1}</td><td><b>${x.n}</b>${x.brands?`<div style="font-size:10.5px;color:var(--tx3)">${x.brands.join(", ")}</div>`:""}</td>
+   <td style="font-size:11.5px;color:var(--tx3)">${x.role}</td>
+   <td><span class="chip" style="background:${CO[x.c].hex}22;color:${CO[x.c].hex}">${CO[x.c].short}</span></td>
+   <td style="font-size:11.5px;color:var(--tx3)">${x.mgr===x.n?"—":x.mgr}</td>
+   <td class="r"><b>${fM(a)}</b></td><td class="r">${fM(t)}</td>
+   <td class="r ${at>=100?"cg":at>=85?"ca":"cr"}">${at}%</td>
+   <td class="r">${incentiveOf(x)>0?fM(incentiveOf(x)*k()):'<span style="color:var(--tx3)">nil</span>'}</td>
+   <td class="r ${x.ar>5?"cr":""}">${x.ar>0?fM(x.ar):"—"}</td></tr>`;}).join("");
+
+ /* deals */
+ let D=DEALS.filter(d=>keys().includes(d.c));
+ if(S.rep!=="all")D=D.filter(d=>d.own===S.rep);
+ if(S.mgr!=="all")D=D.filter(d=>{const r=REPS.find(x=>x.n===d.own);return r&&r.mgr===S.mgr;});
+ if(S.br!=="all")D=D.filter(d=>!d.br||d.br===S.br);
+ $("dsub").textContent="· "+D.length+" deal"+(D.length!==1?"s":"");
+ $("deals").innerHTML=D.length?D.map(d=>`<tr>
+  <td><b>${d.o}</b>${d.br?`<div style="font-size:10.5px;color:var(--tx3)">${d.br}</div>`:""}</td>
+  <td><span class="chip" style="background:${CO[d.c].hex}22;color:${CO[d.c].hex}">${CO[d.c].short}</span></td>
+  <td class="r"><b>${d.amt.toLocaleString("en-US")}</b></td><td class="r">${d.cl}</td><td>${d.st}</td><td>${d.own}</td>
+  <td class="r"><span class="lnk" onclick="toast('URL action','A table viz can open the Salesforce opportunity record.')">Open ↗</span></td></tr>`).join("")
+  :`<tr><td colspan="7" style="color:var(--tx3)">No deals match the current filters.</td></tr>`;
+
+ /* Agentforce controls */
+ $("cqChips").innerHTML=CQ.map((q,i)=>`<button class="chipq" onclick="cqPick(${i})">${q}</button>`).join("");
+ $("dpChips").innerHTML=DPQ.map((d,i)=>`<button class="chipq" onclick="dpPick(${i})">${d.q}</button>`).join("");
+ const pi=$("inspSel").value;
+ $("inspSel").innerHTML=Object.keys(MET).filter(i=>CONTRIB[i]).map(i=>`<option value="${i}">${MET[i].n}</option>`).join("");
+ if(pi)$("inspSel").value=pi;
+ if($("inspAns").innerHTML)$("inspAns").innerHTML=inspectMetric($("inspSel").value||"rev",$("inspDim").value);
+ if($("cqAns").innerHTML)$("cqAns").innerHTML=conciergeAnswer($("askMain").value);
+ if($("sp").classList.contains("open"))renderChat();
+}
+
+/* ═══════════ AGENTFORCE ═══════════ */
+const CONTRIB={
+ rev:{add:true,f:c=>REPS.filter(x=>x.c===c).reduce((s,x)=>s+x.a,0)*k(),fmt:v=>fA(v)},
+ att:{add:false,f:c=>coAgg(c).att,fmt:v=>v+"%",hi:true},
+ gp:{add:true,f:c=>REPS.filter(x=>x.c===c).reduce((s,x)=>s+x.a,0)*k()*FIN[c].gm/100,fmt:v=>fA(v)},
+ openpipe:{add:true,f:c=>STAGES[c].filter(([,,o])=>o).reduce((s,[,v])=>s+v,0),fmt:v=>fA(v)},
+ allpipe:{add:true,f:c=>STAGES[c].reduce((s,[,v])=>s+v,0),fmt:v=>fA(v)},
+ ar90:{add:true,f:c=>AR[c][3],fmt:v=>fA(v)},
+ backlog:{add:true,f:c=>ERP[c].backlog,fmt:v=>fA(v)},
+ inventory:{add:true,f:c=>ERP[c].inv,fmt:v=>fA(v)},
+ cash:{add:true,f:c=>FIN[c].cash*k(),fmt:v=>fA(v)},
+ intake:{add:true,f:c=>FIN[c].intake*k(),fmt:v=>fA(v)},
+ win:{add:false,f:c=>coAgg(c).win,fmt:v=>v+"%",hi:true},
+ ebitda:{add:false,f:c=>ERP[c].ebitda,fmt:v=>v.toFixed(1)+"%",hi:true},
+ dso:{add:false,f:c=>FIN[c].dso,fmt:v=>v+" d",hi:false},
+ ccc:{add:false,f:c=>FIN[c].dso+ERP[c].dio-ERP[c].dpo,fmt:v=>v+" d",hi:false},
+ otd:{add:false,f:c=>ERP[c].otd,fmt:v=>v+"%",hi:true},
+ fill:{add:false,f:c=>OPS[c].fill,fmt:v=>v+"%",hi:true},
+ credit:{add:false,f:c=>ERP[c].credit,fmt:v=>v+"%",hi:false},
+ cycle:{add:false,f:c=>OPS[c].cycle,fmt:v=>v+" d",hi:false},
+ tat:{add:false,f:c=>OPS[c].tat,fmt:v=>v.toFixed(1)+" d",hi:false},
+ calls:{add:true,f:c=>REPS.filter(x=>x.c===c).reduce((s,x)=>s+(x.calls||0),0)*k(),fmt:v=>fN(v)},
+ visits:{add:true,f:c=>REPS.filter(x=>x.c===c).reduce((s,x)=>s+(x.visits||0),0)*k(),fmt:v=>fN(v)},
+ projects:{add:true,f:c=>PROJ[c].val,fmt:v=>fA(v)},
+ salesin:{add:true,f:c=>SALES[c].in*k(),fmt:v=>fA(v)},
+ salesout:{add:true,f:c=>SALES[c].out*k(),fmt:v=>fA(v)},
+ forecast:{add:true,f:c=>(SALES[c].out+FCST[c].pipeClose)*k(),fmt:v=>fA(v)},
+ incentive:{add:true,f:c=>REPS.filter(x=>x.c===c).reduce((s,x)=>s+incentiveOf(x),0)*k(),fmt:v=>fA(v)}
+};
+function inspectMetric(id,dim){
+ const m=MET[id],C=CONTRIB[id];dim=dim||"co";
+ if(!C)return `<div class="ansbox">No breakdown configured for ${m.n}.</div>`;
+ let rows=[];
+ if(dim==="co") rows=keys().map(c=>({k:CO[c].name,v:C.f(c)}));
+ else if(dim==="mgr"){
+  if(!C.add) return `<div class="ansbox">${m.n} is a rate, so a manager-level split needs the underlying counts rather than a weighted average. Analyse it by Company, or use Revenue / Open Pipeline / AR by Manager instead.<span class="src">Inspector</span></div>`;
+  rows=MGRS.filter(mg=>keys().includes(REPS.find(x=>x.mgr===mg).c)).map(mg=>{
+   const R=REPS.filter(x=>x.mgr===mg);
+   const cv=C.f(R[0].c),ct=REPS.filter(x=>x.c===R[0].c).reduce((s,x)=>s+x.t,0);
+   return {k:mg,v:cv*R.reduce((s,x)=>s+x.t,0)/ct};});
+ } else {
+  if(!C.add) return `<div class="ansbox">${m.n} is a rate and is not attributed per salesperson in the model. Analyse by Company, or pick Revenue, Open Pipeline or Calls for a salesperson split.<span class="src">Inspector</span></div>`;
+  rows=reps().map(r=>{const cv=C.f(r.c),ct=REPS.filter(x=>x.c===r.c).reduce((s,x)=>s+x.t,0);
+   return {k:r.n,v:id==="calls"?(r.calls||0)*k():id==="visits"?(r.visits||0)*k():id==="rev"?r.a*k()
+     :id==="incentive"?incentiveOf(r)*k():cv*r.t/ct};});
+ }
+ rows=rows.filter(r=>r.v>0).sort((a,b)=>b.v-a.v).slice(0,8);
+ if(!rows.length)return `<div class="ansbox">No data for ${m.n} in this selection.<span class="src">Inspector</span></div>`;
+ const tot=rows.reduce((s,x)=>s+x.v,0),mx=Math.max(...rows.map(x=>x.v))||1;
+ const bars=rows.map(x=>`<div class="rank"><span class="lb">${x.k}</span><span class="tr"><i style="width:${x.v/mx*100}%"></i></span><b class="vl">${C.fmt(x.v)}</b></div>`).join("");
+ let verdict;
+ if(C.add){const top=rows[0];
+  verdict=`<b>${top.k} is the largest contributor</b> at ${C.fmt(top.v)}, ${Math.round(top.v/tot*100)}% of the ${C.fmt(tot)} shown.`;
+ } else {const best=C.hi?rows[0]:rows[rows.length-1],worst=C.hi?rows[rows.length-1]:rows[0];
+  verdict=`<b>${worst.k} is weakest at ${C.fmt(worst.v)}</b>, against ${best.k} at ${C.fmt(best.v)}.`;}
+ const A=agg();let corr="";
+ if(id==="fill"||id==="inventory")corr=`Related: ${fA(A.lb["No Stock"]||0)} lost to No Stock this ${plb()}, consistent with fill rate at ${A.fill.toFixed(0)}%.`;
+ else if(id==="ar90"||id==="dso")corr=`Related: collections were ${Math.round(A.cash/A.actual*100)}% of billings and ${fA(A.ar[3])} sits beyond 90 days.`;
+ else if(id==="gp"||id==="ebitda")corr=`Related: ${fA(A.lb["Price did not match"]||0)} lost on price this ${plb()}, the largest loss reason.`;
+ else if(id==="openpipe")corr=`Related: total not-closed value is ${fA(A.allPipe)}; the difference sits in stages each company excludes from Open Pipeline.`;
+ else if(id==="calls"||id==="visits")corr=`Related: Traderz planner adherence is ${ACT.planner}% against a ${ACT.plannerT}% target.`;
+ const dimLbl=dim==="co"?"Company":dim==="mgr"?"Sales Manager":"Salesperson";
+ return `<div class="ansbox">${verdict}<div style="margin-top:10px">${bars}</div>${corr?`<div style="margin-top:8px">${corr}</div>`:""}
+  <span class="src">Inspector · ${m.n} by ${dimLbl} · scope ${S.co==="all"?"all companies":CO[S.co].name}, ${plb()}${m.snap?" · snapshot":""}</span></div>`;
+}
+const CQ=["Where will the month land?","Sales In versus Sales Out?","Which company is performing best?","Which sales manager is leading?","What is the incentive payout costing us?",
+ "How much cash is tied up in overdue receivables?","Why are we losing deals?",
+ "Is the open pipeline enough for the rest of the year?","How is the Traderz counter performing?",
+ "Which Hydroway brand is selling best?"];
+function conciergeAnswer(q,plain){
+ const A=agg(),t=(q||"").toLowerCase();
+ const att=pc(A.actual,A.target),coll=A.cash/A.actual*100;
+ const ranked=keys().map(c=>({c,...coAgg(c)})).sort((a,b)=>a.att-b.att);
+ const arTot=A.ar.reduce((s,v)=>s+v,0),ar90s=arTot>0?A.ar[3]/arTot*100:0;
+ const R0=reps(),remain=Math.max(R0.reduce((s,x)=>s+x.t,0)*12-R0.reduce((s,x)=>s+x.a,0)*6.5,.01);
+ const cov=A.openPipe/remain,ccc=A.dso+A.dio-A.dpo;
+ const gap=x=>x.t-x.a>0.05?fA(x.t-x.a)+" short":"on target";
+ let body;
+ if(t.includes("month land")||t.includes("forecast")||t.includes("where will")){
+  const out=A.salesOut,f=out+A.pipeClose,fa=pc(f,A.target);
+  const rows=keys().map(c=>({c,f:(SALES[c].out+FCST[c].pipeClose)*k(),t:REPS.filter(x=>x.c===c).reduce((s,x)=>s+x.t,0)*k()})).map(r=>({...r,att:pc(r.f,r.t)})).sort((a,b)=>b.att-a.att);
+  body=`<b>The month is forecast to land at ${fA(f)}, ${fa}% of the ${fA(A.target)} target.</b> ${fA(out)} is already invoiced at day 18 of 22, with ${fA(A.pipeClose)} of pipeline expected to close. By company: ${rows.map(r=>CO[r.c].short+" "+r.att+"%").join(", ")}. This is a calculated forecast, not a statistical model.`;
+ } else if(t.includes("sales in")||t.includes("sales out")||t.includes("versus")||t.includes("backlog")){
+  body=`<b>Sales In ${fA(A.salesIn)} against Sales Out ${fA(A.salesOut)}</b> — a net +${fM(A.salesIn-A.salesOut)} flowing into backlog, which now stands at ${fA(A.backlog)}, about ${(A.backlog/Math.max(reps().reduce((s,x)=>s+x.a,0),0.01)).toFixed(1)} months of cover. Book-to-bill is ${(A.salesIn/A.salesOut).toFixed(2)}×, so the order book is filling faster than it is being shipped.`;
+ } else if((t.includes("best")||t.includes("performing"))&&!t.includes("traderz")&&!t.includes("counter")&&!t.includes("brand")&&!t.includes("hydroway")&&!t.includes("ksb")&&!t.includes("dab")){
+  const rows=keys().map(c=>({c,...coAgg(c)})).sort((a,b)=>b.att-a.att);
+  if(rows.length===1){
+   const r=rows[0];
+   body=`<b>${CO[r.c].name} is at ${r.att}% of target</b> — ${fA(r.a)} against ${fA(r.t)}, with a ${r.win}% win rate and ${fA(r.pipe)} of open pipeline. Year-on-year growth is +${A.yoy.toFixed(1)}%. Clear the company filter to compare it with the other three.`;
+  } else {
+   body=`<b>${CO[rows[0].c].name} leads at ${rows[0].att}% of target</b>, followed by ${rows.slice(1).map(r=>CO[r.c].short+" "+r.att+"%").join(", ")}. All ${rows.length} companies are at or above plan, and group revenue is ${fA(A.actual)} against ${fA(A.target)} (${pc(A.actual,A.target)}%), with year-on-year growth of +${A.yoy.toFixed(1)}%.`;
+  }
+ } else if(t.includes("incentive")||t.includes("payout")||t.includes("costing")){
+  const gpv=A.actual*A.gm/100,pctgp=gpv>0?A.inc/gpv*100:0;
+  const top=reps().map(r=>({n:r.n,i:incentiveOf(r)*k(),att:pc(r.a,r.t)})).sort((a,b)=>b.i-a.i)[0];
+  body=`<b>Incentive payout is ${fA(A.inc)} this ${plb()}</b>, ${pctgp.toFixed(1)}% of the ${fA(gpv)} gross profit against a ${INC.budgetPctGP}% budget. ${A.qualifying} of ${A.repCount} people cleared the ${INC.threshold}% threshold. Largest single earner is ${top.n} at ${fA(top.i)} on ${top.att}% attainment. Note the tiers used here are illustrative — send the real scheme and this becomes exact.`;
+ } else if(t.includes("project")){
+  body=`<b>${fN(A.projN)} projects are live</b> with ${fA(A.projVal)} of linked pipeline — ${Math.round(A.projVal/Math.max(A.openPipe,1)*100)}% of the ${fA(A.openPipe)} Open Pipeline. The rest is transactional. Project business carries a ${Math.round(A.cycle)}-day cycle, so it needs different coverage assumptions from the Traderz counter.`;
+ } else if(t.includes("manager")||t.includes("team")){
+  const ms=MGRS.map(m=>({m,...mgrAgg(m)})).sort((a,b)=>a.att-b.att);
+  const w=ms[0],b=ms[ms.length-1];
+  body=`<b>${b.m}'s team leads at ${b.att}% of target</b> — ${fM(b.a)} against ${fM(b.t)} across ${b.n} people, win rate ${b.win}%. The lowest is ${w.m} at ${w.att}%, still above plan. Reporting lines are now mapped for Electric Way, Hydroway (Sandeep Rohila) and Traderz (Farhat Hussain); Electric Way Arabia is still to be provided.`;
+ } else if(t.includes("traderz")||t.includes("counter")||t.includes("call")||t.includes("visit")){
+  const callsT=ACT.callsT*k(),visitsT=ACT.visitsT*k();
+  const trz=coAgg("TRZ");
+  body=`<b>Traderz is at ${trz.att}% of target</b> (${fA(trz.a)} of ${fA(trz.t)}) on ${fN(A.calls||ACT.callsT*k()*0.925)} calls against a ${fN(callsT)} target and ${fN(A.visits||ACT.visitsT*k()*0.914)} visits against ${fN(visitsT)}. Planner adherence is ${ACT.planner}% versus a ${ACT.plannerT}% goal, and win rate is ${trz.win}% on many small counter orders.`;
+ } else if(t.includes("brand")||t.includes("hydroway")||t.includes("ksb")||t.includes("dab")){
+  const b=Object.entries(BRAND.HYD).sort((a,b)=>b[1]-a[1]);
+  const covr={};Object.keys(BRAND.HYD).forEach(br=>covr[br]=REPS.filter(x=>x.brands&&x.brands.includes(br)).length);
+  body=`<b>${b[0][0]} leads Hydroway at ${fA(b[0][1]*k())}</b>, then ${b[1][0]} at ${fA(b[1][1]*k())}. Coverage is uneven: DOORI is carried by all ${covr["DOORI"]} people while KSB is carried by only ${covr["KSB"]} — worth checking whether KSB's ${fA(BRAND.HYD.KSB*k())} is capacity-constrained.`;
+ } else if(t.includes("target")||t.includes("furthest")||t.includes("behind")){
+  const w=ranked[0],b=ranked[ranked.length-1];
+  body=ranked.length===1
+   ? `<b>${CO[w.c].name} is at ${w.att}% of target</b> — ${fA(w.a)} against ${fA(w.t)}, ${gap(w)}. Win rate ${w.win}%, open pipeline ${fA(w.pipe)}.`
+   : `<b>${CO[w.c].name} is furthest from target at ${w.att}%</b> (${gap(w)}), while ${CO[b.c].name} leads at ${b.att}%. Across the selection revenue is ${fA(A.actual)} against ${fA(A.target)}, or ${att}%.`;
+ } else if(t.includes("cash")||t.includes("receivable")||t.includes("overdue")||t.includes("collect")){
+  body=`<b>${fA(A.ar[3])} is more than 90 days past due</b> across ${A.arAcc} accounts — ${ar90s.toFixed(1)}% of a ${fA(arTot)} book against a 5% ceiling. DSO is ${Math.round(A.dso)} days versus 60-day terms; collections this ${plb()} were ${fA(A.cash)}, ${Math.round(coll)}% of billings. The cash conversion cycle is ${Math.round(ccc)} days.`;
+ } else if(t.includes("los")||t.includes("deal")&&t.includes("why")){
+  const le=Object.entries(A.lb).sort((a,b)=>b[1]-a[1]);
+  body=`<b>${fA(A.lostVal)} lost across ${A.lost} deals this ${plb()}</b> against ${A.won} won (win rate ${(A.won/(A.won+A.lost)*100).toFixed(1)}%). Largest reason is ${le[0][0].toLowerCase()} at ${fA(le[0][1])}${le[1]?`, then ${le[1][0].toLowerCase()} at ${fA(le[1][1])}`:""}. Fill rate is ${A.fill.toFixed(0)}% against a 95% target.`;
+ } else if(t.includes("pipeline")||t.includes("coverage")||t.includes("rest of")){
+  body=`<b>Open Pipeline is ${fA(A.openPipe)}</b> across ${A.opps} opportunities, covering the remaining ${fA(remain)} of annual target ${cov.toFixed(1)}×. Total not-closed value is ${fA(A.allPipe)} — the difference sits in stages excluded from Open Pipeline (Future, Bidding, Purchase Order, Execution for the Electric Way companies). At a ${(A.won/(A.won+A.lost)*100).toFixed(1)}% win rate you need roughly ${(100/(A.won/(A.won+A.lost)*100)).toFixed(1)}× cover, so this is ${cov>=3?"adequate":"thin"}.`;
+ } else {
+  body=`<b>${S.co==="all"?"All four companies":CO[S.co].name}, ${plb()}.</b> Revenue ${fA(A.actual)} at ${att}% of target, win rate ${(A.won/(A.won+A.lost)*100).toFixed(1)}%, gross margin ${A.gm.toFixed(1)}%, EBITDA ${A.ebitda.toFixed(1)}%. Open Pipeline ${fA(A.openPipe)}. The pressure point is working capital: ${fA(A.ar[3])} overdue beyond 90 days and a ${Math.round(ccc)}-day cash conversion cycle.`;
+ }
+ const srcLine=`Concierge · EW_Group_Sales_Finance · ${S.co==="all"?"all companies":CO[S.co].name}${S.mgr!=="all"?" / "+S.mgr:""}${S.rep!=="all"?" / "+S.rep:""}${S.br!=="all"?" / "+S.br:""}, ${plb()}`;
+ if(plain) return {body,src:srcLine};
+ return `<div class="ansbox">${body}<span class="src">${srcLine}</span></div>`;
+}
+const DPQ=[
+ {q:"Suggest relationships",a:`<b>Relationships suggested</b> for EW_Group_Sales_Finance:<br>• Salesforce <code>Opportunity.OwnerId</code> → <code>User.Id</code> (high)<br>• Salesforce <code>User.ManagerId</code> → <code>User.Id</code> — gives the Sales Manager hierarchy for Electric Way (high)<br>• <code>Invoice</code> → <code>Account</code> and <code>Opportunity</code> (high)<br>• <code>Balance</code> → <code>Accounts</code> and <code>Invoice</code> (high) — gives AR ageing without touching Navision<br>• <code>Order</code> → <code>Opportunity</code> → <code>Projects</code> (high) — the project business chain<br>• <code>Sales Executive Monthly Target</code> → <code>User</code> by month (high)<br>• <code>Invoice</code> / <code>Order</code> line items → <code>Products</code> → <b>Brand</b> field (high) — this is how brand analysis is delivered; Brand is not on the transaction itself<br>• <code>User.Company</code> → company dimension (high) — already on the User record, so no mapping table needed<br>• Incentive model → <code>User</code> + target month (high)<br>Because these objects are native to the org, no Navision-to-Salesforce key mapping is needed for 19 of the 24 metrics.`},
+ {q:"Generate a calculated field",a:`<b>Open Pipeline</b> generated for the per-company stage rule:<pre class="calc">CASE [Company]
+  WHEN 'Electric Way' THEN
+    IF [Stage] IN ('Proposal','Finalizing')
+    THEN [Amount] END
+  WHEN 'Electric Way Arabia' THEN
+    IF [Stage] IN ('Proposal','Finalizing')
+    THEN [Amount] END
+  WHEN 'Hydroway' THEN
+    IF [Stage] IN ('Data Collection','Potential / Tender',
+                   'Active JIH','Submittal') THEN [Amount] END
+END</pre>Hold the stage-to-open mapping as a lookup table rather than hard-coded logic, so changes do not require editing the model.`},
+ {q:"Check the model for issues",a:`<b>Six findings:</b><br>• 9 measures are balances (Open Pipeline, AR&gt;90d, backlog, inventory, DSO, CCC, coverage, credit, projects) with no snapshot date — a daily <code>Snapshot Date</code> is required before publishing them as metrics.<br>• Revenue grain: use <b>Invoice</b> consistently. Mixing Invoice and Order values in different metrics is the fastest way to make two cards disagree.<br>• No cost field on any Salesforce object — <b>Gross Profit and EBITDA cannot be computed from Salesforce alone</b>; item cost must come from Navision.<br>• Stage values differ by company (8 for Electric Way, 7 for Hydroway) — a conformed <code>Stage Group</code> dimension is needed for cross-company stage vizzes.<br>• Sales Manager is populated for 11 of 32 users; the rest resolve to “Not mapped”.<br>• Brand exists only on <b>Products</b>; any brand metric must aggregate through line items, so a transaction with no product link will drop out of brand views — check for unlinked lines.<br>• Incentive tiers are hard-coded in the calculation — hold them in the incentive model object so Finance can change rates without editing the semantic model.`},
+ {q:"Write field descriptions",a:`<b>Descriptions drafted</b>, which improves Concierge accuracy. Examples —<br><code>Open Pipeline</code>: “Opportunity value in the stages each company treats as live. Electric Way and Electric Way Arabia count Transactional, Proposal and Finalizing only.”<br><code>Customer Planner Adherence</code>: “Share of planned Traderz customer contacts actually completed in the period.”`}];
+function conciergeAsk(){$("cqAns").innerHTML=conciergeAnswer($("askMain").value||"Summarise performance");}
+function cqPick(i){$("askMain").value=CQ[i];$("cqAns").innerHTML=conciergeAnswer(CQ[i]);}
+function inspectRun(){$("inspAns").innerHTML=inspectMetric($("inspSel").value,$("inspDim").value);}
+function dpPick(i){$("dpAns").innerHTML=`<div class="ansbox">${DPQ[i].a}<span class="src">Data Pro · semantic modelling assistance</span></div>`;}
+
+/* ═══════════ AGENTFORCE CAPABILITY CATALOGUE (all licensed in your org) ═══════════ */
+const CAPS=[
+ {n:"Agentforce Sales Coach",lic:"200 Sales Coach + 100,000 Sales Coach User",
+  what:"An AI coach that role-plays pitches and objection handling with each rep, then scores the conversation.",
+  ceo:"Gives you a coaching-coverage metric next to attainment, so you can see whether the reps missing target are actually being developed. Already on this dashboard as <b>Sales Coaching Coverage</b>.",
+  wire:"Runs in Sales Cloud against the User and Opportunity records. Session scores land on a coaching object, which you publish as a Tableau Next metric."},
+ {n:"Agentforce SDR Agent",lic:"200 SDR Agent + 10,000 SDR Access",
+  what:"An autonomous agent that follows up inbound leads by email, answers basic questions, qualifies and books the meeting.",
+  ceo:"Directly fixes the leak your Salesforce dashboard showed — 15.6% of leads never actioned and a 0.7% quote conversion. On this dashboard as <b>Leads Worked by SDR Agent</b>.",
+  wire:"Works the Lead object. Set topics and guardrails in Agent Builder, then report on Leads where Worked By Agent = true."},
+ {n:"Einstein Conversation Insights",lic:"2,000 licences",
+  what:"Transcribes and analyses customer calls, flagging competitor mentions, pricing objections and talk-time ratio.",
+  ceo:"The best fit for Traderz, whose whole business is 1,850 calls a month. Turns those calls into evidence about <i>why</i> price is your largest lost reason. On this dashboard as <b>Calls Analysed by AI</b>.",
+  wire:"Attaches to Activity records. Keyword and competitor fields become dimensions on a Tableau Next metric."},
+ {n:"Einstein Prompt Templates",lic:"100,000 licences",
+  what:"Reusable, governed prompts that generate text from your live Salesforce data — briefings, follow-up emails, account summaries.",
+  ceo:"This is how you get an AI written CEO brief without waiting for Tableau Next Dashboard Summaries, which are still Beta. Build a prompt template that reads the metrics and writes the morning narrative.",
+  wire:"Built in Prompt Builder, grounded on your objects, invoked from a Flow — and a Flow can be a button on this dashboard."},
+ {n:"Agentforce Coworker",lic:"100,000 licences + setup",
+  what:"Agents that work alongside your team on assigned jobs rather than answering one question at a time.",
+  ceo:"Candidate jobs from this dashboard: chase the AED 7.0M of AR over 90 days, re-activate the 785 dormant accounts, or prepare the monthly company review packs.",
+  wire:"Configured in Agentforce Studio with topics and actions. Triggered on a schedule or from a dashboard Flow button."},
+ {n:"Einstein AI Skills + Skills Manager",lic:"1 AI Skills, 100,000 Skills Manager",
+  what:"Custom skills you define once and let any agent call — your own business logic rather than stock behaviour.",
+  ceo:"Encode EW Group rules an off-the-shelf agent will not know: that Open Opportunity counts only Proposal and Finalizing, or that Hydroway brand coverage is per salesperson.",
+  wire:"Defined in Skills Manager, then made available to Concierge and other agents so their answers match your definitions."},
+ {n:"Task-Based Agents",lic:"50 licences",
+  what:"Narrow agents built for one repeating task, cheaper and more predictable than a general assistant.",
+  ceo:"Good first candidates: a daily quote-turnaround chaser, a No Stock escalation agent, or a credit-limit review agent.",
+  wire:"Built in Agent Builder with a single topic. Pair each with a Flow so this dashboard can launch it."},
+ {n:"Einstein Search",lic:"75 licences",
+  what:"Natural-language search across Salesforce records, tuned to your objects and synonyms.",
+  ceo:"Lets the CEO jump from a number on this dashboard to the underlying customer or opportunity without learning Salesforce navigation.",
+  wire:"Enabled in Setup. Complements the URL actions already on the deals table."},
+ {n:"Unified Catalog",lic:"74 Admin + 74 Agent",
+  what:"A governed catalogue of data assets with lineage, ownership and descriptions.",
+  ceo:"This is what stops two dashboards disagreeing. Your 33 metric definitions belong here so Finance, Sales and the agents all read the same meaning.",
+  wire:"Register the semantic model and metrics; Concierge accuracy improves because descriptions are curated."},
+ {n:"Agentforce Service Agent",lic:"200 user + 10,000 builder",
+  what:"A customer-facing agent that handles inbound service questions end to end.",
+  ceo:"Outside the sales dashboard, but relevant to Traderz: routine stock and price enquiries could be answered by an agent, freeing the counter team for revenue calls.",
+  wire:"Deployed on a channel, grounded on Products and Order data."}];
+function openCaps(){
+ $("mpN").textContent="Agentforce capabilities available on your licences";
+ $("mpS").textContent="10 features · verified against your Setup licence list";
+ $("mpB").innerHTML=`<div class="txt" style="margin-bottom:12px"><b>These are Salesforce-platform Agentforce features, not Tableau Next dashboard widgets.</b>
+   Three of them already feed metrics on this dashboard. The rest connect either by producing data you publish as a metric, or by being launched from a Flow button here. Concierge, Inspector and Data Pro remain the three that live inside Tableau Next itself.</div>`
+  +CAPS.map((c,i)=>`<div class="blk">
+    <h4>${c.n}</h4>
+    <div class="defrow">
+     <span class="k">Your licences</span><span>${c.lic}</span>
+     <span class="k">What it does</span><span>${c.what}</span>
+     <span class="k">Value to the CEO</span><span>${c.ceo}</span>
+     <span class="k">How it wires in</span><span>${c.wire}</span>
+    </div></div>`).join("")
+  +`<div class="blk"><h4>Not licensed</h4><p>Slack delivery is not set up, so agent output arrives in Salesforce and Tableau Next rather than a channel. Tableau Next Dashboard Summaries remain Beta — Einstein Prompt Templates are the licensed way to get the same written narrative today.</p></div>`;
+ $("mp").classList.add("open");$("mp").scrollTop=0;
+}
+
+/* ═══════════ METRIC PAGES ═══════════ */
+function openMetric(id){
+ const m=MET[id],v=MV[id]||{};
+ $("mpN").textContent=m.n;
+ $("mpS").textContent=`${S.co==="all"?"All companies":CO[S.co].name}${S.mgr!=="all"?" · "+S.mgr:""}${S.rep!=="all"?" · "+S.rep:""} · ${plb()}`;
+ const col=v.r==="g"?"var(--green)":v.r==="a"?"var(--amber)":v.r==="r"?"var(--red)":"var(--tx)";
+ const d=DLT[id];
+ $("mpB").innerHTML=`
+  <div class="hero">
+   <div><div class="lab">Current value</div><div class="big" style="color:${col}">${v.v||"—"}</div></div>
+   <div><div class="lab">vs prior period</div><div class="side">${d===undefined?"—":(d>0?'<span class="up">▲ '+d.toFixed(1)+'%</span>':d<0?'<span class="down">▼ '+Math.abs(d).toFixed(1)+'%</span>':'0.0%')}</div></div>
+   <div><div class="lab">Reference</div><div class="side">${v.t||"—"}</div></div>
+  </div>
+  ${m.snap?`<div class="warn"><b>Snapshot metric.</b> Every Tableau Next metric needs a time dimension, and this one is a balance rather than a flow. Model it against a daily <b>Snapshot Date</b> built in Data 360, not a transaction date.</div>`:""}
+  ${id==="openpipe"?`<div class="warn"><b>Stage rules differ by company.</b> Electric Way, Electric Way Arabia and Traderz count only Proposal and Finalizing. Hydroway's rule is an assumption pending your confirmation. Traderz stages are placeholders.</div>`:""}
+  <div class="blk"><h4>What it shows</h4><p>${m.what}</p></div>
+  <div class="blk"><h4>Metric definition (metrics store)</h4><div class="defrow">
+    <span class="k">Semantic model</span><span>EW_Group_Sales_Finance</span>
+    <span class="k">Measure</span><span>${m.sm}</span>
+    <span class="k">Aggregation</span><span>${m.ag}</span>
+    <span class="k">Time dimension</span><span>${m.tm}</span>
+    <span class="k">Dimensions</span><span>${m.dm}</span>
+    <span class="k">Type</span><span>${m.snap?"Snapshot (balance)":"Period (flow)"}</span>
+  </div></div>
+  <div class="blk"><h4>Calculation</h4><pre class="calc">${m.calc.replace(/&/g,"&amp;").replace(/</g,"&lt;")}</pre></div>
+  <div class="blk"><h4>Source</h4><p>${m.src}</p></div>
+  <div class="blk"><h4>Agentforce on this metric</h4><div class="act">
+    <button class="actbtn" onclick="document.getElementById('mpI').innerHTML=inspectMetric('${id}','co')">Inspector: by company</button>
+    <button class="actbtn" onclick="document.getElementById('mpI').innerHTML=inspectMetric('${id}','mgr')">Inspector: by manager</button>
+    <button class="actbtn" onclick="document.getElementById('mpI').innerHTML=inspectMetric('${id}','rep')">Inspector: by salesperson</button>
+   </div><div id="mpI"></div></div>
+  <div class="blk"><h4>Related metrics</h4>${(m.rel||[]).filter(r=>MET[r]).map(r=>`<button class="relbtn" onclick="openMetric('${r}')">${MET[r].n} →</button>`).join("")}</div>`;
+ $("mp").classList.add("open");$("mp").scrollTop=0;
+}
+function openDefs(){
+ $("dpB").innerHTML=`<div class="txt">All published metrics and their definitions. In Tableau Next this is a second dashboard of text widgets reached by a button; the definitions themselves live in the semantic model.</div>`+
+  Object.keys(MET).map(id=>{const m=MET[id];
+   return `<div class="blk"><h4>${m.n}${m.snap?" · snapshot":""}</h4><p>${m.what}</p>
+    <div class="defrow" style="margin-top:8px">
+     <span class="k">Measure / aggregation</span><span>${m.sm} · ${m.ag}</span>
+     <span class="k">Time dimension</span><span>${m.tm}</span>
+     <span class="k">Dimensions</span><span>${m.dm}</span>
+     <span class="k">Source</span><span>${m.src}</span></div></div>`;}).join("");
+ $("dp").classList.add("open");$("dp").scrollTop=0;
+}
+function close_(i){$(i).classList.remove("open");}
+/* Two licensed chat engines the CEO can use */
+const ENGINES={
+ concierge:{n:"Concierge",sub:"inside Tableau Next",
+  note:"Concierge answers from the Tableau Semantics model, so every number matches the published metrics. Runs on your <b>Tableau Next</b> licences and is available to Consumer users, so the CEO can chat without a Creator seat. Admins can pre-approve Verified Questions so common answers never drift."},
+ agentforce:{n:"CEO Assistant",sub:"Agentforce employee agent",
+  note:"A custom employee agent you build in Agentforce Studio, grounded on the same metrics through <b>Einstein AI Skills</b> and <b>Prompt Templates</b>. Unlike Concierge it works anywhere in Salesforce and on mobile, can span objects beyond this dashboard, and can take action through Flows. Backed by your <b>Einstein Agent (601)</b>, <b>Agentforce Coworker (100,000)</b>, <b>Einstein AI Skills Manager (100,000)</b> and <b>Einstein Prompt Templates (100,000)</b> entitlements."}};
+let CHAT_ENGINE="concierge";
+let CHAT=[];
+function setEngine(e){CHAT_ENGINE=e;CHAT=[];renderChat();}
+function openConcierge(){
+ $("sp").classList.add("open");
+ if(!CHAT.length)renderChat();
+}
+function renderChat(){
+ const E=ENGINES[CHAT_ENGINE];
+ $("chatTitle").textContent=E.n+" \u00b7 "+E.sub;
+ $("engRow").innerHTML=Object.keys(ENGINES).map(k=>
+  `<button class="engbtn ${CHAT_ENGINE===k?"on":""}" onclick="setEngine('${k}')">${ENGINES[k].n}<span>${ENGINES[k].sub}</span></button>`).join("");
+ $("engNote").innerHTML=E.note;
+ if(!CHAT.length){
+  const scope=(S.co==="all"?"all four companies":CO[S.co].name)+(S.rep!=="all"?" / "+S.rep:"")+" \u00b7 "+plb();
+  CHAT=[{r:"sys",t:`${E.n} is reading the <b>EW_Group_Sales_Finance</b> model, scoped to <b>${scope}</b>. Change a filter on the dashboard and the answers follow.`}];
+ }
+ $("chatLog").innerHTML=CHAT.map(m=>{
+  if(m.r==="me")return `<div class="bub me">${m.t}</div>`;
+  if(m.r==="sys")return `<div class="bub sys">${m.t}</div>`;
+  return `<div class="bub ai">${m.t}${m.src?`<span class="src">${m.src}</span>`:""}</div>`;
+ }).join("");
+ const asked=CHAT.filter(m=>m.r==="me").map(m=>m.t);
+ const left=CQ.filter(q=>!asked.includes(q)).slice(0,3);
+ $("chatSugg").innerHTML=left.map(q=>`<button class="chipq" onclick="askIt('${q.replace(/'/g,"")}')">${q}</button>`).join("");
+ $("chatLog").scrollTop=999999;
+}
+function askIt(q){
+ const question=q||$("ask").value||"Summarise performance";
+ $("ask").value="";
+ const a=conciergeAnswer(question,true);
+ const src=CHAT_ENGINE==="concierge"?a.src:a.src.replace("Concierge","CEO Assistant (Agentforce)");
+ CHAT.push({r:"me",t:question});
+ CHAT.push({r:"ai",t:a.body,src:src});
+ if(CHAT_ENGINE==="agentforce")
+  CHAT.push({r:"sys",t:"The CEO Assistant can also act on this: run a Flow, draft a follow-up with a Prompt Template, or hand the item to an owner."});
+ renderChat();
+}
+function toast(t,s){const e=$("toast");e.innerHTML=`<b>${t}</b><span class="s">${s}</span>`;e.classList.add("open");
+ clearTimeout(window.__t);window.__t=setTimeout(()=>e.classList.remove("open"),4000);}
+function ceoBrief(){
+ const A=agg(),gp=A.actual*A.gm/100,arTot=A.ar.reduce((s,v)=>s+v,0);
+ const r=Object.keys(CO).map(c=>({c,...coAgg(c)})).sort((a,b)=>b.att-a.att);
+ $("mpN").textContent="CEO brief";
+ $("mpS").textContent="Generated by an Einstein Prompt Template · "+plb();
+ $("mpB").innerHTML=`<div class="blk"><h4>Generated narrative</h4><p>
+  Group revenue is <b>${fA(A.actual)}</b>, ${pc(A.actual,A.target)}% of the ${fA(A.target)} target, up ${A.yoy.toFixed(1)}% on last year.
+  All four companies are above plan, led by ${CO[r[0].c].name} at ${r[0].att}% and followed by ${r.slice(1).map(x=>CO[x.c].short+" "+x.att+"%").join(", ")}.
+  Gross profit is ${fA(gp)} at a ${A.gm.toFixed(1)}% margin and EBITDA ${A.ebitda.toFixed(1)}%.
+  Cash collection ran at ${Math.round(A.cash/A.actual*100)}% of billings, and only ${(A.ar[3]/arTot*100).toFixed(1)}% of the ${fA(arTot)} receivable book is beyond 90 days.
+  Sales In of ${fA(A.salesIn)} against Sales Out of ${fA(A.salesOut)} adds ${fM(A.salesIn-A.salesOut)} to a backlog now worth ${fA(A.backlog)}.
+  The month is forecast to land at <b>${fA(A.salesOut+A.pipeClose)}</b>.
+  The largest remaining leak is <b>${fA(A.lb["Price did not match"])}</b> lost on price; with ${fA(A.lb["No Stock"])} lost to No Stock behind it, against a stock fill rate of ${A.fill.toFixed(0)}%.
+ </p></div>
+ <div class="blk"><h4>How this is produced</h4><p>An <b>Einstein Prompt Template</b> grounded on the published metrics, invoked by a Flow from the dashboard. You have 100,000 Prompt Template licences, so this is available today — unlike Tableau Next Dashboard Summaries, which are still Beta.</p></div>
+ <div class="blk"><h4>Available actions</h4><div class="act">
+   <button class="actbtn" onclick="close_('mp')">Back to dashboard</button>
+   <button class="actbtn" onclick="toast('Brief scheduled','A Flow can run this prompt every weekday morning and email or post the brief.')">Schedule weekday brief</button>
+ </div></div>`;
+ $("mp").classList.add("open");$("mp").scrollTop=0;
+}
+function flow(n){toast("Flow launched","“"+n+"” runs a Salesforce Flow.");}
+function setCo(c){S.co=c;if(c!=="all"){if(S.mgr!=="all"&&S.mgr!=="Not mapped"){const r=REPS.find(x=>x.mgr===S.mgr);if(r&&r.c!==c)S.mgr="all";}
+ if(S.rep!=="all"){const r=REPS.find(x=>x.n===S.rep);if(r&&r.c!==c)S.rep="all";}}render();}
+function togCo(c){setCo(S.co===c?"all":c);}
+function setMgr(m){S.mgr=m;if(m!=="all"&&m!=="Not mapped"){const r=REPS.find(x=>x.mgr===m);if(r)S.co=r.c;}render();}
+function togMgr(m){setMgr(S.mgr===m?"all":m);}
+function setRep(r){S.rep=r;if(r!=="all"){const x=REPS.find(y=>y.n===r);if(x)S.co=x.c;}render();}
+function togRep(r){setRep(S.rep===r?"all":r);}
+$("pBtns").addEventListener("click",e=>{const b=e.target.closest?e.target.closest(".fbtn"):null;if(!b)return;
+ document.querySelectorAll("#pBtns .fbtn").forEach(x=>x.classList.remove("on"));b.classList.add("on");S.p=b.dataset.p;render();});
+$("coSel").addEventListener("change",e=>setCo(e.target.value));
+$("mgrSel").addEventListener("change",e=>setMgr(e.target.value));
+$("repSel").addEventListener("change",e=>setRep(e.target.value));
+function setBr(b){
+ S.br=b;
+ if(b!=="all"){
+  const cos=brandCos(b);
+  /* a brand carried by one company only (DAB, DOORI, KSB, CALPAK -> Hydroway) scopes the page to it */
+  if(cos.length===1&&S.co!==cos[0]){
+   S.co=cos[0];
+   if(S.mgr!=="all"&&S.mgr!=="Not mapped"&&mgrCo(S.mgr)!==S.co)S.mgr="all";
+   if(S.rep!=="all"){const r=REPS.find(x=>x.n===S.rep);if(r&&r.c!==S.co)S.rep="all";}
+  }
+  /* drop a salesperson who does not carry the selected brand */
+  if(S.rep!=="all"){const r=REPS.find(x=>x.n===S.rep);if(r&&r.brands&&!r.brands.includes(b))S.rep="all";}
+ }
+ render();
+}
+$("brSel").addEventListener("change",e=>setBr(e.target.value));
+render();
+</script>
+</body>
+</html>
